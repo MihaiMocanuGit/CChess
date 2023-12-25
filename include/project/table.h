@@ -21,14 +21,13 @@ typedef enum
 typedef struct
 {
     TableState_e state;
+
+    // the actual pieces are owned by (live in) teams, we actually hold ony
+    // a reference to the pieces.
     Piece *table[TABLE_Y][TABLE_X];
 
     Team whiteTeam;
-
-
     Team blackTeam;
-    Piece takenByBlack[TEAM_INITIAL_NO_PIECES];
-    unsigned noTakenByBlack;
 
 } Table;
 
