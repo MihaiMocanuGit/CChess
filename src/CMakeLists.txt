@@ -1,9 +1,10 @@
 # Optionally glob, but only for CMake 3.12 or later:
 file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${CChess_SOURCE_DIR}/include/project/*.h")
-set(HEADER_LIST "${CChess_SOURCE_DIR}/include/project/testingStructure.h")
+set(PROJECT_INCLUDE_ROOT "${CChess_SOURCE_DIR}/include/project")
+set(HEADER_LIST "${PROJECT_INCLUDE_ROOT}/piece.h" "${PROJECT_INCLUDE_ROOT}/table.h" "${PROJECT_INCLUDE_ROOT}/team.h")
 
 # Make an automatic library - will be static or dynamic based on user setting
-add_library(CChessGame testingStructure.c ${HEADER_LIST})
+add_library(CChessGame piece.c table.c team.c ${HEADER_LIST})
 
 # We need this directory, and users of our library will need it too
 target_include_directories(CChessGame PUBLIC ../include)

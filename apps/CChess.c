@@ -1,7 +1,13 @@
 #include <SDL2/SDL.h>
+#include "project/piece.h"
+#include "project/table.h"
 
 int main(int argc, char *argv[])
 {
+    Piece piece = piece_construct(WHITE, PAWN, 0, 0);
+    Team team;
+    Table table;
+
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Window *window = SDL_CreateWindow("SDL2 Window",
