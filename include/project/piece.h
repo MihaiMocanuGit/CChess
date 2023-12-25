@@ -16,8 +16,6 @@ typedef enum
 {
     WHITE,
     BLACK,
-    TAKEN_BY_WHITE,
-    TAKEN_BY_BLACK,
 } PieceTeam_e;
 
 typedef struct
