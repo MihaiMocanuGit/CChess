@@ -1,33 +1,22 @@
 #ifndef CCHESS_TEAM_H
 #define CCHESS_TEAM_H
 
+#include <stdbool.h>
 #include "piece.h"
 
 #define TEAM_INITIAL_NO_PIECES 32
 typedef struct
 {
+    PieceTeam_e teamColor;
     Piece pieces[TEAM_INITIAL_NO_PIECES];
     unsigned noPieces;
 
-    //direct access reference to all the pawns in the pieces array
-    Piece *pawns[TEAM_INITIAL_NO_PIECES];
-    unsigned noPawns;
-
-    //direct access reference to all the bishops in the pieces array
-    Piece *bishops[TEAM_INITIAL_NO_PIECES];
-    unsigned noBishops;
-
-    //direct access reference to all the rooks in the pieces array
-    Piece *rooks[TEAM_INITIAL_NO_PIECES];
-    unsigned noRooks;
-
-    //direct access reference to all the queens in the pieces array
-    Piece *queens[TEAM_INITIAL_NO_PIECES];
-    unsigned noQueens;
+    //direct access reference to the 2 rooks in the pieces array.
+    //Comes in handy with castling
+    Piece *rooks[2];
 
     //direct access reference to the king in the pieces array
     Piece *king;
-    unsigned noKing;
 
     //The pieces that are taken by an enemy team are moved into this array
     Piece lostPieces[TEAM_INITIAL_NO_PIECES];
@@ -42,5 +31,22 @@ typedef struct
     // Therefore, modeling it this way makes more practical sense.
 
 } Team;
+
+//Adds the given piece without making any checks on the type of the piece/free space etc
+void team_addPiece(Team *team, const Piece *piece);
+
+
+void team_initEmpty(Team *team, PieceTeam_e color);
+Team team_constructEmpty(PieceTeam_e color);
+
+//TODO: Should the responsibility of placing a team on the table
+// be the role of a team or a table. It would perhaps make more sense to move
+// these 4 functions to the table file.
+void team_initDefaultTop(Team *team, PieceTeam_e color);
+Team team_constructDefaultTop(PieceTeam_e color);
+
+void team_initDefaultBottom(Team *team, PieceTeam_e color);
+Team team_constructDefaultBottom(PieceTeam_e color);
+
 
 #endif //CCHESS_TEAM_H
