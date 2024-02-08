@@ -11,18 +11,25 @@
 typedef enum
 {
     PLAYING,
-    WHITE_CHECKED,
-    BLACK_CHECKED,
+    WHITE_IN_CHECK,
+    BLACK_IN_CHECK,
     WHITE_WON,
     BLACK_WON,
     TIE
 } TableState_e;
 
+typedef enum
+{
+    WHITE_TO_MOVE,
+    BLACK_TO_MOVE
+}TableTurn_e;
+
 typedef struct
 {
     TableState_e state;
+    TableTurn_e turn;
 
-    // the actual pieces are owned by (live in) teams, we actually hold ony
+    // the actual pieces are owned by (they live inside) teams, we actually hold only
     // a reference to the pieces.
     Piece *table[TABLE_Y][TABLE_X];
 
