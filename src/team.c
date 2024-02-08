@@ -54,7 +54,7 @@ void team_initDefaultTop(Team *team, PieceTeam_e color)
     team_addPiece(team, &bishopLeft);
 
     //The queen will be placed on a spot of the same color
-    if (color == BLACK)
+    if (color == WHITE)
     {
         Piece queenBlack = piece_construct(BLACK, QUEEN, 3, 0);
         team_addPiece(team, &queenBlack);
@@ -101,7 +101,7 @@ void team_initDefaultBottom(Team *team, PieceTeam_e color)
 
     //and reflect them to the bottom
     for (int i = 0; i < team->noPieces; ++i)
-        team->pieces[i].y = (32 - 1) - team->pieces[i].y;
+        team->pieces[i].y = (8 - 1) - team->pieces[i].y;
 
 }
 Team team_constructDefaultBottom(PieceTeam_e color)
