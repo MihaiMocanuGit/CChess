@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
                                           0);
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
+
     SDL_Surface *background = SDL_LoadBMP("../data/background.bmp");
     SDL_Texture *textureBackground = SDL_CreateTextureFromSurface(renderer, background);
 
@@ -170,7 +171,33 @@ int main(int argc, char *argv[])
     }
 
     SDL_DestroyTexture(textureBackground);
+    SDL_DestroyTexture(textureWhiteKing);
+    SDL_DestroyTexture(textureWhiteQueen);
+    SDL_DestroyTexture(textureWhiteRook);
+    SDL_DestroyTexture(textureWhiteKnight);
+    SDL_DestroyTexture(textureWhiteBishop);
+    SDL_DestroyTexture(textureWhitePawn);
+    SDL_DestroyTexture(textureBlackKing);
+    SDL_DestroyTexture(textureBlackQueen);
+    SDL_DestroyTexture(textureBlackRook);
+    SDL_DestroyTexture(textureBlackKnight);
+    SDL_DestroyTexture(textureBlackBishop);
+    SDL_DestroyTexture(textureBlackPawn);
+
     SDL_FreeSurface(background);
+    SDL_FreeSurface(whiteKing);
+    SDL_FreeSurface(whiteQueen);
+    SDL_FreeSurface(whiteRook);
+    SDL_FreeSurface(whiteKnight);
+    SDL_FreeSurface(whiteBishop);
+    SDL_FreeSurface(whitePawn);
+    SDL_FreeSurface(blackKing);
+    SDL_FreeSurface(blackQueen);
+    SDL_FreeSurface(blackRook);
+    SDL_FreeSurface(blackKnight);
+    SDL_FreeSurface(blackBishop);
+    SDL_FreeSurface(blackPawn);
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
