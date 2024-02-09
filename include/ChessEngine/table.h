@@ -38,4 +38,14 @@ typedef struct
 
 } Table;
 
+//TODO: Should the responsibility of placing a team on the table
+// be the role of a team or a table. It would perhaps make more sense to move
+// these 4 functions to the table file.
+void table_initTeamDefaultTop(Team *team, PieceTeam_e color);
+Team table_constructTeamDefaultTop(PieceTeam_e color);
+
+void table_initTeamDefaultBottom(Team *team, PieceTeam_e color);
+Team table_constructTeamDefaultBottom(PieceTeam_e color);
+
+
 #endif //CCHESS_TABLE_H

@@ -2,8 +2,8 @@
 
 #include <stdbool.h>
 
-#include "project/piece.h"
-#include "project/table.h"
+#include "ChessEngine/piece.h"
+#include "ChessEngine/table.h"
 
 #define SCREEN_X 800
 #define SCREEN_Y 600
@@ -25,10 +25,10 @@ void piecePositionToScreenPosition(const Piece *piece, int *screenX, int *screen
 int main(int argc, char *argv[])
 {
     Team whiteTeam;
-    team_initDefaultBottom(&whiteTeam, WHITE);
+    table_initTeamDefaultBottom(&whiteTeam, WHITE);
 
     Team blackTeam;
-    team_initDefaultTop(&blackTeam, WHITE);
+    table_initTeamDefaultTop(&blackTeam, WHITE);
 
     SDL_Init(SDL_INIT_VIDEO);
 

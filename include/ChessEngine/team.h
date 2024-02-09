@@ -40,14 +40,7 @@ void team_addPiece(Team *team, const Piece *piece);
 void team_initEmpty(Team *team, PieceTeam_e color);
 Team team_constructEmpty(PieceTeam_e color);
 
-//TODO: Should the responsibility of placing a team on the table
-// be the role of a team or a table. It would perhaps make more sense to move
-// these 4 functions to the table file.
-void team_initDefaultTop(Team *team, PieceTeam_e color);
-Team team_constructDefaultTop(PieceTeam_e color);
 
-void team_initDefaultBottom(Team *team, PieceTeam_e color);
-Team team_constructDefaultBottom(PieceTeam_e color);
 
 
 #endif //CCHESS_TEAM_H
