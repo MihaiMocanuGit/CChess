@@ -4,7 +4,7 @@ set(PROJECT_INCLUDE_ROOT "${CChess_SOURCE_DIR}/include/ChessEngine")
 set(HEADER_LIST "${PROJECT_INCLUDE_ROOT}/piece.h" "${PROJECT_INCLUDE_ROOT}/table.h" "${PROJECT_INCLUDE_ROOT}/team.h")
 
 # Make an automatic library - will be static or dynamic based on user setting
-add_library(CChessGame piece.c table.c team.c ${HEADER_LIST})
+add_library(CChessGame ChessEngine/piece.c ChessEngine/table.c ChessEngine/team.c ${HEADER_LIST})
 
 # We need this directory, and users of our library will need it too
 target_include_directories(CChessGame PUBLIC ../include)
