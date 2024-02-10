@@ -2,7 +2,7 @@
 #file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${CChess_SOURCE_DIR}/include/ChessEngine/*.h")
 cmake_minimum_required(VERSION 3.26)
 
-set(CHESS_ENGINE_HEADER_LIST "include/piece.h" "include/table.h" "include/team.h")
+set(CHESS_ENGINE_HEADER_LIST "chessStructure.h" "include/piece.h" "include/table.h" "include/team.h")
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(ChessEngine src/piece.c src/table.c src/team.c ${CHESS_ENGINE_HEADER_LIST})
