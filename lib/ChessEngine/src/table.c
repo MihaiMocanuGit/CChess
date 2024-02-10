@@ -1,4 +1,4 @@
-#include "ChessEngine/table.h"
+#include "table.h"
 
 
 //Gets the last successfully added piece,

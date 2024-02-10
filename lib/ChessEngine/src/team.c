@@ -1,4 +1,4 @@
-#include "ChessEngine/team.h"
+#include "team.h"
 
 #include <stdlib.h>
 

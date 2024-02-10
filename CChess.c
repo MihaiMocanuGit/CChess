@@ -2,8 +2,8 @@
 
 #include <stdbool.h>
 
-#include "ChessEngine/piece.h"
-#include "ChessEngine/table.h"
+#include "lib/ChessEngine/include/piece.h"
+#include "lib/ChessEngine/include/table.h"
 
 #define SCREEN_X 800
 #define SCREEN_Y 600

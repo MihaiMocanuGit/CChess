@@ -1,4 +1,4 @@
-#include "ChessEngine/piece.h"
+#include "piece.h"
 
 Piece piece_construct(PieceTeam_e team, PieceType_e type, int x, int y)
 {
