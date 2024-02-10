@@ -4,6 +4,9 @@
 
 #include "lib/ChessEngine/chessStructure.h"
 
+#include "include/objectSurfaces.h"
+#include "include/objectTextures.h"
+
 
 #define SCREEN_X 800
 #define SCREEN_Y 600
@@ -40,45 +43,8 @@ int main(int argc, char *argv[])
                                           0);
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
-
-    SDL_Surface *background = SDL_LoadBMP("../data/background.bmp");
-    SDL_Texture *textureBackground = SDL_CreateTextureFromSurface(renderer, background);
-
-    SDL_Surface *whitePawn = SDL_LoadBMP("../data/white_pawn.bmp");
-    SDL_Texture *textureWhitePawn = SDL_CreateTextureFromSurface(renderer, whitePawn);
-
-    SDL_Surface *blackPawn = SDL_LoadBMP("../data/black_pawn.bmp");
-    SDL_Texture *textureBlackPawn = SDL_CreateTextureFromSurface(renderer, blackPawn);
-
-    SDL_Surface *whiteBishop = SDL_LoadBMP("../data/white_bishop.bmp");
-    SDL_Texture *textureWhiteBishop = SDL_CreateTextureFromSurface(renderer, whiteBishop);
-
-    SDL_Surface *blackBishop = SDL_LoadBMP("../data/black_bishop.bmp");
-    SDL_Texture *textureBlackBishop = SDL_CreateTextureFromSurface(renderer, blackBishop);
-
-    SDL_Surface *whiteRook = SDL_LoadBMP("../data/white_rook.bmp");
-    SDL_Texture *textureWhiteRook= SDL_CreateTextureFromSurface(renderer, whiteRook);
-
-    SDL_Surface *blackRook = SDL_LoadBMP("../data/black_rook.bmp");
-    SDL_Texture *textureBlackRook = SDL_CreateTextureFromSurface(renderer, blackRook);
-
-    SDL_Surface *whiteKnight = SDL_LoadBMP("../data/white_knight.bmp");
-    SDL_Texture *textureWhiteKnight = SDL_CreateTextureFromSurface(renderer, whiteKnight);
-
-    SDL_Surface *blackKnight = SDL_LoadBMP("../data/black_knight.bmp");
-    SDL_Texture *textureBlackKnight = SDL_CreateTextureFromSurface(renderer, blackKnight);
-
-    SDL_Surface *whiteQueen = SDL_LoadBMP("../data/white_queen.bmp");
-    SDL_Texture *textureWhiteQueen = SDL_CreateTextureFromSurface(renderer, whiteQueen);
-
-    SDL_Surface *blackQueen = SDL_LoadBMP("../data/black_queen.bmp");
-    SDL_Texture *textureBlackQueen = SDL_CreateTextureFromSurface(renderer, blackQueen);
-
-    SDL_Surface *whiteKing = SDL_LoadBMP("../data/white_king.bmp");
-    SDL_Texture *textureWhiteKing = SDL_CreateTextureFromSurface(renderer, whiteKing);
-
-    SDL_Surface *blackKing = SDL_LoadBMP("../data/black_king.bmp");
-    SDL_Texture *textureBlackKing = SDL_CreateTextureFromSurface(renderer, blackKing);
+    ObjectSurfaces surfaces = objectSurfaces_construct();
+    ObjectTextures textures = objectTextures_construct(renderer, &surfaces);
 
     bool quit = false;
     SDL_Event event;
@@ -95,7 +61,7 @@ int main(int argc, char *argv[])
 
 
 
-        SDL_RenderCopy(renderer, textureBackground, NULL, NULL);
+        SDL_RenderCopy(renderer, textures.background, NULL, NULL);
 
         for (int i = 0; i < whiteTeam.noPieces; ++i)
         {
@@ -112,22 +78,22 @@ int main(int argc, char *argv[])
             {
 
                 case PAWN:
-                    SDL_RenderCopy(renderer, textureWhitePawn, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.whitePawn, NULL, &piecePosition);
                     break;
                 case BISHOP:
-                    SDL_RenderCopy(renderer, textureWhiteBishop, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.whiteBishop, NULL, &piecePosition);
                     break;
                 case KNIGHT:
-                    SDL_RenderCopy(renderer, textureWhiteKnight, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.whiteKnight, NULL, &piecePosition);
                     break;
                 case ROOK:
-                    SDL_RenderCopy(renderer, textureWhiteRook, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.whiteRook, NULL, &piecePosition);
                     break;
                 case QUEEN:
-                    SDL_RenderCopy(renderer, textureWhiteQueen, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.whiteQueen, NULL, &piecePosition);
                     break;
                 case KING:
-                    SDL_RenderCopy(renderer, textureWhiteKing, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.whiteKing, NULL, &piecePosition);
                     break;
             }
         }
@@ -147,22 +113,22 @@ int main(int argc, char *argv[])
             {
 
                 case PAWN:
-                    SDL_RenderCopy(renderer, textureBlackPawn, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.blackPawn, NULL, &piecePosition);
                     break;
                 case BISHOP:
-                    SDL_RenderCopy(renderer, textureBlackBishop, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.blackBishop, NULL, &piecePosition);
                     break;
                 case KNIGHT:
-                    SDL_RenderCopy(renderer, textureBlackKnight, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.blackKnight, NULL, &piecePosition);
                     break;
                 case ROOK:
-                    SDL_RenderCopy(renderer, textureBlackRook, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.blackRook, NULL, &piecePosition);
                     break;
                 case QUEEN:
-                    SDL_RenderCopy(renderer, textureBlackQueen, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.blackQueen, NULL, &piecePosition);
                     break;
                 case KING:
-                    SDL_RenderCopy(renderer, textureBlackKing, NULL, &piecePosition);
+                    SDL_RenderCopy(renderer, textures.blackKing, NULL, &piecePosition);
                     break;
             }
         }
@@ -170,33 +136,8 @@ int main(int argc, char *argv[])
 
     }
 
-    SDL_DestroyTexture(textureBackground);
-    SDL_DestroyTexture(textureWhiteKing);
-    SDL_DestroyTexture(textureWhiteQueen);
-    SDL_DestroyTexture(textureWhiteRook);
-    SDL_DestroyTexture(textureWhiteKnight);
-    SDL_DestroyTexture(textureWhiteBishop);
-    SDL_DestroyTexture(textureWhitePawn);
-    SDL_DestroyTexture(textureBlackKing);
-    SDL_DestroyTexture(textureBlackQueen);
-    SDL_DestroyTexture(textureBlackRook);
-    SDL_DestroyTexture(textureBlackKnight);
-    SDL_DestroyTexture(textureBlackBishop);
-    SDL_DestroyTexture(textureBlackPawn);
-
-    SDL_FreeSurface(background);
-    SDL_FreeSurface(whiteKing);
-    SDL_FreeSurface(whiteQueen);
-    SDL_FreeSurface(whiteRook);
-    SDL_FreeSurface(whiteKnight);
-    SDL_FreeSurface(whiteBishop);
-    SDL_FreeSurface(whitePawn);
-    SDL_FreeSurface(blackKing);
-    SDL_FreeSurface(blackQueen);
-    SDL_FreeSurface(blackRook);
-    SDL_FreeSurface(blackKnight);
-    SDL_FreeSurface(blackBishop);
-    SDL_FreeSurface(blackPawn);
+    objectTextures_freeAllTextures(&textures);
+    objectSurfaces_freeAllSurfaces(&surfaces);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
