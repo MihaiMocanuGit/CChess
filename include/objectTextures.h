@@ -1,5 +1,5 @@
-#ifndef CCHESS_SDLTEXTURES_H
-#define CCHESS_SDLTEXTURES_H
+#ifndef CCHESS_OBJECT_TEXTURES_H
+#define CCHESS_OBJECT_TEXTURES_H
 #include <SDL2/SDL.h>
 
 typedef struct
@@ -24,4 +24,4 @@ ObjectTextures objectTextures_construct(const SDL_Renderer *renderer);
 void objectTextures_init(ObjectTextures* objectTextures, const SDL_Renderer *renderer);
 void objectTextures_free(ObjectTextures* objectTextures);
 
-#endif //CCHESS_SDLTEXTURES_H
+#endif //CCHESS_OBJECT_TEXTURES_H
