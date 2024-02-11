@@ -7,11 +7,49 @@
 
 #include "include/screen.h"
 
+void leftMousePressed(SDL_MouseButtonEvent *e, Piece **heldPiece, Table *table, const Screen* screen)
+{
+    int pieceX = -1, pieceY = -1;
+    screen_screenPositionToPiecePosition(screen, e->x, e->y, &pieceX, &pieceY);
+    if (pieceX >= 0 && pieceX < TABLE_WIDTH && pieceY >= 0 && pieceY < TABLE_HEIGHT)
+    {
+        printf("X:%d \t Y:%d \n", pieceX, pieceY);
+        if (*heldPiece == NULL && table->table[pieceY][pieceX] != NULL)
+        {
+            *heldPiece = table->table[pieceY][pieceX];
+        }
+        else if (*heldPiece != NULL && table->table[pieceY][pieceX] == NULL)
+        {
+            table->table[(*heldPiece)->y][(*heldPiece)->x] = NULL;
 
+            (*heldPiece)->x = pieceX;
+            (*heldPiece)->y = pieceY;
+            table->table[pieceY][pieceX] = *heldPiece;
+            *heldPiece = NULL;
+
+        }
+        else if (*heldPiece != NULL && table->table[pieceY][pieceX] != NULL)
+        {
+            //opposing team piece might be taken
+        }
+
+    }
+}
+void mousePressed(SDL_MouseButtonEvent *e, Piece **heldPiece, Table *table, const Screen* screen)
+{
+    switch (e->button)
+    {
+        case SDL_BUTTON_LEFT:
+            leftMousePressed(e, heldPiece, table, screen);
+            break;
+    }
+
+}
 
 int main(int argc, char *argv[])
 {
-    Table table = table_construct();
+    Table table;
+    table_init(&table);
 
     SDL_Init(SDL_INIT_VIDEO);
     Screen screen = screen_construct("CChess", 800, 600, 0, 0);
@@ -26,35 +64,13 @@ int main(int argc, char *argv[])
         int cursorX, cursorY;
         Uint32 mouseState = SDL_GetMouseState(&cursorX, &cursorY);
 
-        //if left click is pressed
-        if (SDL_BUTTON(SDL_BUTTON_LEFT) & mouseState)
-        {
-            int pieceX = -1, pieceY = -1;
-            screen_screenPositionToPiecePosition(&screen, cursorX, cursorY, &pieceX, &pieceY);
-            if (pieceX >= 0 && pieceX < TABLE_WIDTH && pieceY >= 0 && pieceY < TABLE_HEIGHT)
-            {
-                if (heldPiece == NULL && table.table[pieceY][pieceX] != NULL)
-                {
-                    heldPiece = table.table[pieceY][pieceX];
-                }
-                else if(heldPiece != NULL && table.table[pieceY][pieceX] == NULL)
-                {
-                    heldPiece->x = pieceX;
-                    heldPiece->y = pieceY;
-                    table.table[pieceY][pieceX] = heldPiece;
-
-                }
-                else if(heldPiece != NULL && table.table[pieceY][pieceX] != NULL)
-                {
-                     //opposing team piece might be taken
-                }
-
-            }
-        }
         switch (event.type)
         {
             case SDL_QUIT:
                 quit = true;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                mousePressed(&event.button, &heldPiece, &table, &screen);
                 break;
         }
 

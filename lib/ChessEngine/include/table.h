@@ -41,7 +41,7 @@ typedef struct
 
 
 void table_init(Table *table);
-Table table_construct();
+
 
 
 #endif //CCHESS_TABLE_H

@@ -124,9 +124,3 @@ void table_init(Table *table)
     }
 }
 
-Table table_construct()
-{
-    Table table;
-    table_init(&table);
-    return table;
-}
