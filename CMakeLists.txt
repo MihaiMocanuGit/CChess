@@ -44,5 +44,5 @@ target_compile_features(CChess PRIVATE c_std_17)
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-target_link_libraries(CChess PRIVATE AppSources ChessEngine ${SDL2_LIBRARIES})
+target_link_libraries(CChess PRIVATE -lm AppSources ChessEngine ${SDL2_LIBRARIES})
 

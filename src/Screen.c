@@ -1,5 +1,6 @@
 #include "../include/Screen.h"
 
+#include <math.h>
 
 
 Screen screen_construct(const char *windowTitle, int w, int h, Uint32 flags, Uint32 rendererFlags)
@@ -44,9 +45,9 @@ void screen_screenPositionToPiecePosition(const Screen *screen, int screenCursor
 {
     int width, height;
     SDL_GetWindowSize(screen->window, &width, &height);
-    const int offsetX = (width - SCREEN_TABLE_LENGTH) / 2;
-    const int offsetY = (height - SCREEN_TABLE_LENGTH) / 2;
+    const double offsetX = (width - SCREEN_TABLE_LENGTH) / 2.0;
+    const double offsetY = (height - SCREEN_TABLE_LENGTH) / 2.0;
 
-    *outPieceX = (screenCursorX - offsetX) / SCREEN_TABLE_CELL_SIZE;
-    *outPieceY = (screenCursorY - offsetY) / SCREEN_TABLE_CELL_SIZE;
+    *outPieceX = floor((screenCursorX - offsetX) / SCREEN_TABLE_CELL_SIZE);
+    *outPieceY = floor((screenCursorY - offsetY) / SCREEN_TABLE_CELL_SIZE);
 }

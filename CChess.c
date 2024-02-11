@@ -33,8 +33,11 @@ int main(int argc, char *argv[])
                 quit = true;
                 break;
         }
-
-
+        int mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
+        int pieceX, pieceY;
+        screen_screenPositionToPiecePosition(&screen, mouseX, mouseY, &pieceX, &pieceY);
+        printf("X: %d \t Y: %d\n", pieceX, pieceY);
 
         SDL_RenderCopy(screen.renderer, screen.textures.background, NULL, NULL);
 
