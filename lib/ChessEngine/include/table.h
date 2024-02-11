@@ -29,23 +29,19 @@ typedef struct
     TableState_e state;
     TableTurn_e turn;
 
+    Team whiteTeam;
+    Team blackTeam;
+
     // the actual pieces are owned by (they live inside) teams, we actually hold only
     // a reference to the pieces.
     Piece *table[TABLE_Y][TABLE_X];
 
-    Team whiteTeam;
-    Team blackTeam;
-
 } Table;
 
-//TODO: Should the responsibility of placing a team on the table
-// be the role of a team or a table. It would perhaps make more sense to move
-// these 4 functions to the table file.
-void table_initTeamDefaultTop(Team *team, PieceTeam_e color);
-Team table_constructTeamDefaultTop(PieceTeam_e color);
 
-void table_initTeamDefaultBottom(Team *team, PieceTeam_e color);
-Team table_constructTeamDefaultBottom(PieceTeam_e color);
+
+void table_init(Table *table);
+Table table_construct();
 
 
 #endif //CCHESS_TABLE_H

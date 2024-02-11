@@ -1,5 +1,6 @@
 #include "table.h"
 
+#include <string.h>
 
 //Gets the last successfully added piece,
 //Does not check for empty data;
@@ -8,7 +9,7 @@ static Piece* m_getLastAddedPiece(Team *team)
     return &(team->pieces[team->noPieces - 1]);
 }
 
-void table_initTeamDefaultTop(Team *team, PieceTeam_e color)
+void m_initTeamDefaultTop(Team *team, PieceTeam_e color)
 {   //
     //      0|W 1|B 2|W 3|B 4|W 5|B 6|W 7|B
     //  0   R   K   B   Q/K K/Q B   K   R
@@ -63,27 +64,69 @@ void table_initTeamDefaultTop(Team *team, PieceTeam_e color)
 
 }
 
-Team table_constructTeamDefaultTop(PieceTeam_e color)
+Team m_constructTeamDefaultTop(PieceTeam_e color)
 {
     Team team;
-    table_initTeamDefaultTop(&team, color);
+    m_initTeamDefaultTop(&team, color);
     return team;
 }
 
 
-void table_initTeamDefaultBottom(Team *team, PieceTeam_e color)
+void m_initTeamDefaultBottom(Team *team, PieceTeam_e color)
 {
     //place the pieces at the top first
-    table_initTeamDefaultTop(team, color);
+    m_initTeamDefaultTop(team, color);
 
     //and reflect them to the bottom
     for (int i = 0; i < team->noPieces; ++i)
         team->pieces[i].y = (8 - 1) - team->pieces[i].y;
 
 }
-Team table_constructTeamDefaultBottom(PieceTeam_e color)
+Team m_constructTeamDefaultBottom(PieceTeam_e color)
 {
     Team team;
-    table_initTeamDefaultBottom(&team, color);
+    m_initTeamDefaultBottom(&team, color);
     return team;
+}
+
+void table_init(Table *table)
+{
+    table->state = PLAYING;
+    table->turn = WHITE_TO_MOVE;
+
+    table->whiteTeam = m_constructTeamDefaultBottom(WHITE);
+    table->blackTeam = m_constructTeamDefaultTop(BLACK);
+
+    memset(table->table, 0, sizeof(table->table));
+
+    int i;
+    for (i = 0; i < table->whiteTeam.noPieces && i < table->blackTeam.noPieces; ++i)
+    {
+        Piece *piece = &table->whiteTeam.pieces[i];
+        table->table[piece->y][piece->x] = piece;
+
+        piece = &table->blackTeam.pieces[i];
+        table->table[piece->y][piece->x] = piece;
+    }
+
+    //if the rules of chess remain unchanged, we should not enter into the next
+    //2 for loops, as the no of pieces between teams is equal (both equal to 16)
+    for (; i < table->whiteTeam.noPieces; ++i)
+    {
+        Piece *piece = &table->whiteTeam.pieces[i];
+        table->table[piece->y][piece->x] = piece;
+    }
+
+    for (; i < table->blackTeam.noPieces; ++i)
+    {
+        Piece *piece = &table->blackTeam.pieces[i];
+        table->table[piece->y][piece->x] = piece;
+    }
+}
+
+Table table_construct()
+{
+    Table table;
+    table_init(&table);
+    return table;
 }

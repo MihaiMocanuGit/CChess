@@ -5,6 +5,7 @@
 #include <SDL2/SDL_render.h>
 
 #include "../lib/ChessEngine/include/piece.h"
+#include "../lib/ChessEngine/include/table.h"
 #include "objectSurfaces.h"
 #include "objectTextures.h"
 
@@ -30,4 +31,6 @@ void screen_free(Screen *screen);
 SDL_Rect screen_piecePositionToScreenPosition(const Screen *screen, const Piece *piece);
 void screen_screenPositionToPiecePosition(const Screen *screen, int screenCursorX, int screenCursorY,
                                           int *outPieceX, int *outPieceY);
+
+void screen_drawTeams(const Screen *screen, const Table *table);
 #endif //CCHESS_SCREEN_H
