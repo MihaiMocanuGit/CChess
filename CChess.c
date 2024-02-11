@@ -5,7 +5,7 @@
 #include "lib/ChessEngine/chessStructure.h"
 
 
-#include "include/Screen.h"
+#include "include/screen.h"
 
 
 

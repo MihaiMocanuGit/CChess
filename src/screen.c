@@ -1,4 +1,4 @@
-#include "../include/Screen.h"
+#include "../include/screen.h"
 
 #include <math.h>
 
