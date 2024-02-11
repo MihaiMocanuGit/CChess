@@ -5,8 +5,8 @@
 #include "team.h"
 
 
-#define TABLE_X 8
-#define TABLE_Y 8
+#define TABLE_WIDTH 8
+#define TABLE_HEIGHT 8
 
 typedef enum
 {
@@ -34,7 +34,7 @@ typedef struct
 
     // the actual pieces are owned by (they live inside) teams, we actually hold only
     // a reference to the pieces.
-    Piece *table[TABLE_Y][TABLE_X];
+    Piece *table[TABLE_HEIGHT][TABLE_WIDTH];
 
 } Table;
 

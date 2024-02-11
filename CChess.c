@@ -18,10 +18,39 @@ int main(int argc, char *argv[])
 
     bool quit = false;
     SDL_Event event;
+
+    Piece* heldPiece = NULL;
     while (!quit)
     {
         SDL_WaitEvent(&event);
+        int cursorX, cursorY;
+        Uint32 mouseState = SDL_GetMouseState(&cursorX, &cursorY);
 
+        //if left click is pressed
+        if (SDL_BUTTON(SDL_BUTTON_LEFT) & mouseState)
+        {
+            int pieceX = -1, pieceY = -1;
+            screen_screenPositionToPiecePosition(&screen, cursorX, cursorY, &pieceX, &pieceY);
+            if (pieceX >= 0 && pieceX < TABLE_WIDTH && pieceY >= 0 && pieceY < TABLE_HEIGHT)
+            {
+                if (heldPiece == NULL && table.table[pieceY][pieceX] != NULL)
+                {
+                    heldPiece = table.table[pieceY][pieceX];
+                }
+                else if(heldPiece != NULL && table.table[pieceY][pieceX] == NULL)
+                {
+                    heldPiece->x = pieceX;
+                    heldPiece->y = pieceY;
+                    table.table[pieceY][pieceX] = heldPiece;
+
+                }
+                else if(heldPiece != NULL && table.table[pieceY][pieceX] != NULL)
+                {
+                     //opposing team piece might be taken
+                }
+
+            }
+        }
         switch (event.type)
         {
             case SDL_QUIT:
