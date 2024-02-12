@@ -4,54 +4,10 @@
 
 #include "lib/ChessEngine/chessStructure.h"
 
-
 #include "include/screen.h"
+#include "mouseControl.h"
 
-void leftMousePressed(SDL_MouseButtonEvent *e, Piece **heldPiece, Table *table, const Screen* screen)
-{
-    int pieceX = -1, pieceY = -1;
-    screen_screenPositionToPiecePosition(screen, e->x, e->y, &pieceX, &pieceY);
-    if (pieceX >= 0 && pieceX < TABLE_WIDTH && pieceY >= 0 && pieceY < TABLE_HEIGHT)
-    {
-        if (*heldPiece == NULL && table->table[pieceY][pieceX] != NULL)
-        {
-            *heldPiece = table->table[pieceY][pieceX];
-        }
-        else if (*heldPiece != NULL && table->table[pieceY][pieceX] == NULL)
-        {
-            table->table[(*heldPiece)->y][(*heldPiece)->x] = NULL;
 
-            (*heldPiece)->x = pieceX;
-            (*heldPiece)->y = pieceY;
-            table->table[pieceY][pieceX] = *heldPiece;
-            *heldPiece = NULL;
-
-        }
-        else if (*heldPiece != NULL && table->table[pieceY][pieceX] != NULL)
-        {
-            //opposing team piece might be taken
-        }
-
-    }
-}
-void rightMousePressed(SDL_MouseButtonEvent *e, Piece **heldPiece)
-{
-    //put the held piece back
-    *heldPiece = NULL;
-}
-void mousePressed(SDL_MouseButtonEvent *e, Piece **heldPiece, Table *table, const Screen* screen)
-{
-    switch (e->button)
-    {
-        case SDL_BUTTON_LEFT:
-            leftMousePressed(e, heldPiece, table, screen);
-            break;
-        case SDL_BUTTON_RIGHT:
-            rightMousePressed(e, heldPiece);
-            break;
-    }
-
-}
 
 int main(int argc, char *argv[])
 {
@@ -75,7 +31,7 @@ int main(int argc, char *argv[])
                 quit = true;
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                mousePressed(&event.button, &heldPiece, &table, &screen);
+                mouseControl_btnPressed(&event.button, &heldPiece, &table, &screen);
                 break;
         }
 
