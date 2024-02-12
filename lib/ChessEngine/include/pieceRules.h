@@ -2,6 +2,7 @@
 #define CCHESS_PIECE_RULES_H
 
 #include "piece.h"
+#include "table.h"
 
 typedef enum
 {
@@ -16,11 +17,10 @@ typedef struct
 {
     struct
     {
-        int x;
-        int y;
+        int x,y;
         MoveType_e type;
 
-        // to make a move we might need information about another piece.
+        // To make a move we might need information about another piece.
         // for example:
         //  1) With respect to the King, if we decide to castle we must
         //  know where the rook is
@@ -28,14 +28,26 @@ typedef struct
         //  help us to know what pawn was attacked.
         //  3) Maybe it would be better for every capture to remember which piece
         //  we are attacking. It is redundant information as we can extract it from
-        //  the move position.
-
+        //  the move position, but it is easier to already have the information
+        //  at hand.
         Piece *movePartner;
 
-    } moves[64]; //there are 64 spots on the table, so we can't have
-    //more than 64 valid spots for a piece to move in
+
+        //there are 64 spots on the table, so we can't have
+        // more than 64 valid spots for a piece to move in
+    } moves[TABLE_HEIGHT * TABLE_WIDTH];
+
+
     int noMoves;
     Piece *subjectPiece;
 }LegalMoves;
+void pieceMoves_initEmptyLegalMoves(LegalMoves *legalMoves);
+LegalMoves pieceMoves_constructEmptyLegalMoves();
 
+void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingInCheck, LegalMoves *outMoves);
+void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool kingInCheck, LegalMoves *outMoves);
+void pieceRules_findMovesRook(const Piece *rook, const Table *table, bool kingInCheck, LegalMoves *outMoves);
+void pieceRules_findMovesKnight(const Piece *knight, const Table *table, bool kingInCheck, LegalMoves *outMoves);
+void pieceRules_findMovesQueen(const Piece *queen, const Table *table, bool kingInCheck, LegalMoves *outMoves);
+void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingInCheck, LegalMoves *outMoves);
 #endif //CCHESS_PIECE_RULES_H
