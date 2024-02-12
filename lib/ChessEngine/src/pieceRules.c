@@ -36,6 +36,25 @@ void m_pieceMoves_addMove(LegalMoves *moves,  Move move)
     moves->moves[moves->noMoves++] = move;
 }
 
+void m_pieceRules_moveGenerator(const Table *table, PieceTeam_e subjectTeam, int startX, int startY,
+                                int stepX, int stepY, int noSteps, LegalMoves *outMoves)
+{
+    for (int i = 1; i <= noSteps; ++i)
+    {
+        const int newX = startX + i * stepX;
+        const int newY = startY + i * stepY;
+        if (table->table[newY][newX] == NULL)
+        {
+            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, MOVE, NULL));
+        }
+        else
+        {
+            if (subjectTeam != table->table[newY][newX]->team)
+                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
+            break;
+        }
+    }
+}
 void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool kingInCheck, LegalMoves *outMoves)
 {
     //TODO: Special case for when the king is in check
@@ -47,74 +66,19 @@ void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool ki
     const int startY = bishop->y;
 
     const int upperLeftSteps = (startX < startY) ? startX : startY;
-    for (int i = 1; i <= upperLeftSteps; ++i)
-    {
-        const int newX = startX - i;
-        const int newY = startY - i;
-        if (table->table[newY][newX] == NULL)
-        {
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, MOVE, NULL));
-        }
-        else
-        {
-            if (bishop->team != table->table[newY][newX]->team)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
-            break;
-        }
-    }
+    m_pieceRules_moveGenerator(table, bishop->team, startX, startY, -1, -1, upperLeftSteps, outMoves);
+
 
     const int upperRightSteps = (TABLE_WIDTH - startX - 1 < startY) ? TABLE_WIDTH - startX - 1 : startY;
-    for (int i = 1; i <= upperRightSteps; ++i)
-    {
-        const int newX = startX + i;
-        const int newY = startY - i;
-        if (table->table[newY][newX] == NULL)
-        {
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, MOVE, NULL));
-        }
-        else
-        {
-            if (bishop->team != table->table[newY][newX]->team)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
-            break;
-        }
-    }
+    m_pieceRules_moveGenerator(table, bishop->team, startX, startY, +1, -1, upperRightSteps, outMoves);
+
 
     const int lowerLeftSteps = (startX < TABLE_HEIGHT - startY - 1) ? startX : TABLE_HEIGHT - startY - 1;
-    for (int i = 1; i <= lowerLeftSteps; ++i)
-    {
-        const int newX = startX - i;
-        const int newY = startY + i;
-        if (table->table[newY][newX] == NULL)
-        {
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, MOVE, NULL));
-        }
-        else
-        {
-            if (bishop->team != table->table[newY][newX]->team)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
-            break;
-        }
-    }
+    m_pieceRules_moveGenerator(table, bishop->team, startX, startY, -1, +1, lowerLeftSteps, outMoves);
 
     const int lowerRightSteps = (TABLE_WIDTH - startX - 1 < TABLE_HEIGHT - startY - 1)  ? TABLE_WIDTH - startX - 1
                                                                                         : TABLE_HEIGHT - startY - 1;
-    for (int i = 1; i <= lowerRightSteps; ++i)
-    {
-        const int newX = startX + i;
-        const int newY = startY + i;
-        if (table->table[newY][newX] == NULL)
-        {
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, MOVE, NULL));
-        }
-        else
-        {
-            if (bishop->team != table->table[newY][newX]->team)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
-            break;
-        }
-    }
-
+    m_pieceRules_moveGenerator(table, bishop->team, startX, startY, +1, +1, lowerRightSteps, outMoves);
 }
 
 
