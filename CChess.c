@@ -8,44 +8,6 @@
 #include "mouseControl.h"
 
 
-void DrawCircle(SDL_Renderer * renderer, int32_t centreX, int32_t centreY, int32_t radius)
-{
-    const int32_t diameter = (radius * 2);
-
-    int32_t x = (radius - 1);
-    int32_t y = 0;
-    int32_t tx = 1;
-    int32_t ty = 1;
-    int32_t error = (tx - diameter);
-
-    while (x >= y)
-    {
-        //  Each of the following renders an octant of the circle
-        SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
-        SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
-        SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
-        SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
-        SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
-        SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
-        SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
-        SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
-
-        if (error <= 0)
-        {
-            ++y;
-            error += ty;
-            ty += 2;
-        }
-
-        if (error > 0)
-        {
-            --x;
-            tx += 2;
-            error += (tx - diameter);
-        }
-    }
-}
-
 int main(int argc, char *argv[])
 {
     Table table;
@@ -77,16 +39,37 @@ int main(int argc, char *argv[])
 
         screen_drawTeams(&screen, &table);
 
-        if (heldPiece != NULL && heldPiece->type == BISHOP)
+        if (heldPiece != NULL)
         {
             LegalMoves moves = legalMoves_constructEmpty();
-            pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+
+            switch (heldPiece->type)
+            {
+                case PAWN:
+                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    break;
+                case BISHOP:
+                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    break;
+                case KNIGHT:
+                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    break;
+                case ROOK:
+                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    break;
+                case QUEEN:
+                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    break;
+                case KING:
+                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    break;
+            }
+
 
             for (int i = 0; i < moves.noMoves; ++i)
             {
                 const int x = moves.moves[i].x;
                 const int y = moves.moves[i].y;
-
 
                 SDL_Rect rect = screen_tablePositionToScreenPosition(&screen, x, y);
                 if (moves.moves[i].type == MOVE)
