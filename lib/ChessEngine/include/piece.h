@@ -23,6 +23,7 @@ typedef struct
     PieceTeam_e team;
     PieceType_e type;
     int x, y;
+    int movesMade;
 
 } Piece;
 

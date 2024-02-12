@@ -13,7 +13,6 @@ void leftMousePressed(SDL_MouseButtonEvent *e, Piece **heldPiece, Table *table, 
     screen_screenPositionToPiecePosition(screen, e->x, e->y, &pieceX, &pieceY);
     if (pieceX >= 0 && pieceX < TABLE_WIDTH && pieceY >= 0 && pieceY < TABLE_HEIGHT)
     {
-        printf("X:%d \t Y:%d \n", pieceX, pieceY);
         if (*heldPiece == NULL && table->table[pieceY][pieceX] != NULL)
         {
             *heldPiece = table->table[pieceY][pieceX];
@@ -35,12 +34,20 @@ void leftMousePressed(SDL_MouseButtonEvent *e, Piece **heldPiece, Table *table, 
 
     }
 }
+void rightMousePressed(SDL_MouseButtonEvent *e, Piece **heldPiece)
+{
+    //put the held piece back
+    *heldPiece = NULL;
+}
 void mousePressed(SDL_MouseButtonEvent *e, Piece **heldPiece, Table *table, const Screen* screen)
 {
     switch (e->button)
     {
         case SDL_BUTTON_LEFT:
             leftMousePressed(e, heldPiece, table, screen);
+            break;
+        case SDL_BUTTON_RIGHT:
+            rightMousePressed(e, heldPiece);
             break;
     }
 
@@ -61,8 +68,6 @@ int main(int argc, char *argv[])
     while (!quit)
     {
         SDL_WaitEvent(&event);
-        int cursorX, cursorY;
-        Uint32 mouseState = SDL_GetMouseState(&cursorX, &cursorY);
 
         switch (event.type)
         {
