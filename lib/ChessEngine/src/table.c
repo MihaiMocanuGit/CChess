@@ -34,20 +34,20 @@ void m_initTeamDefaultTop(Team *team, PieceTeam_e color)
     //The queen will be placed on a spot of the same color
     if (color == WHITE)
     {
-        Piece queenBlack = piece_construct(BLACK, QUEEN, 3, 0);
+        Piece queenBlack = piece_construct(WHITE, QUEEN, 3, 0);
         team_addPiece(team, &queenBlack);
 
-        Piece kingBlack = piece_construct(BLACK, KING, 4, 0);
+        Piece kingBlack = piece_construct(WHITE, KING, 4, 0);
         team_addPiece(team, &kingBlack);
         team->king = m_getLastAddedPiece(team);
     }
     else
     {
-        Piece kingWhite = piece_construct(WHITE, KING, 3, 0);
+        Piece kingWhite = piece_construct(BLACK, KING, 3, 0);
         team_addPiece(team, &kingWhite);
         team->king = m_getLastAddedPiece(team);
 
-        Piece queenWhite = piece_construct(WHITE, QUEEN, 4, 0);
+        Piece queenWhite = piece_construct(BLACK, QUEEN, 4, 0);
         team_addPiece(team, &queenWhite);
     }
 
