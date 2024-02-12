@@ -26,6 +26,9 @@ typedef struct
     SDL_Texture *whiteKing;
     SDL_Texture *blackKing;
 
+    SDL_Texture  *moveCircle;
+    SDL_Texture  *captureCircle;
+
 } ObjectTextures;
 
 ObjectTextures objectTextures_construct(SDL_Renderer *renderer, const ObjectSurfaces *surfaces);

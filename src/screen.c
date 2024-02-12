@@ -26,7 +26,7 @@ void screen_free(Screen *screen)
     SDL_DestroyWindow(screen->window);
 }
 
-SDL_Rect screen_piecePositionToScreenPosition(const Screen *screen, const Piece *piece)
+SDL_Rect screen_tablePositionToScreenPosition(const Screen *screen, int tableX, int tableY)
 {
     //the table is centered in the middle and its length is SCREEN_TABLE_X_Y
     //the total width and height of the screen is SCREEN_X, respectively SCREEN_Y
@@ -35,11 +35,12 @@ SDL_Rect screen_piecePositionToScreenPosition(const Screen *screen, const Piece 
     const int offsetX = (width - SCREEN_TABLE_LENGTH) / 2;
     const int offsetY = (height - SCREEN_TABLE_LENGTH) / 2;
 
-    const int pieceX = piece->x * SCREEN_TABLE_CELL_SIZE + offsetX;
-    const int pieceY = piece->y * SCREEN_TABLE_CELL_SIZE + offsetY;
-    SDL_Rect position = {.x = pieceX, .y = pieceY, .w = SCREEN_PIECE_SIZE, .h = SCREEN_PIECE_SIZE};
+    const int pieceX = tableX * SCREEN_TABLE_CELL_SIZE + offsetX;
+    const int pieceY = tableY * SCREEN_TABLE_CELL_SIZE + offsetY;
+    SDL_Rect position = {.x = pieceX, .y = pieceY, .w = SCREEN_TABLE_CELL_SIZE, .h = SCREEN_TABLE_CELL_SIZE};
     return position;
 }
+
 
 void screen_screenPositionToPiecePosition(const Screen *screen, int screenCursorX, int screenCursorY, int *outPieceX, int *outPieceY)
 {
@@ -57,7 +58,7 @@ void screen_drawTeams(const Screen *screen, const Table *table)
     for (int i = 0; i < table->whiteTeam.noPieces; ++i)
     {
         const Piece *piece = &table->whiteTeam.pieces[i];
-        SDL_Rect piecePosition = screen_piecePositionToScreenPosition(screen, piece);
+        SDL_Rect piecePosition = screen_tablePositionToScreenPosition(screen, piece->x, piece->y);
 
         switch (piece->type)
         {
@@ -85,7 +86,7 @@ void screen_drawTeams(const Screen *screen, const Table *table)
     for (int i = 0; i < table->blackTeam.noPieces; ++i)
     {
         const Piece *piece = &table->blackTeam.pieces[i];
-        SDL_Rect piecePosition = screen_piecePositionToScreenPosition(screen, piece);
+        SDL_Rect piecePosition = screen_tablePositionToScreenPosition(screen, piece->x, piece->y);
 
         switch (piece->type)
         {
@@ -111,3 +112,4 @@ void screen_drawTeams(const Screen *screen, const Table *table)
         }
     }
 }
+

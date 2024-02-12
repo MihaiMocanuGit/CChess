@@ -16,6 +16,8 @@
 #define OBJECT_SURFACES_BLACK_QUEEN_BMP_PATH "../data/black_queen.bmp"
 #define OBJECT_SURFACES_WHITE_KING_BMP_PATH "../data/white_king.bmp"
 #define OBJECT_SURFACES_BLACK_KING_BMP_PATH "../data/black_king.bmp"
+#define OBJECT_SURFACES_MOVE_CIRCLE_BMP_PATH "../data/move_circle.bmp"
+#define OBJECT_SURFACES_CAPTURE_CIRCLE_BMP_PATH "../data/capture_circle.bmp"
 
 typedef struct
 {
@@ -38,6 +40,9 @@ typedef struct
 
     SDL_Surface *whiteKing;
     SDL_Surface *blackKing;
+
+    SDL_Surface  *moveCircle;
+    SDL_Surface  *captureCircle;
 } ObjectSurfaces;
 
 

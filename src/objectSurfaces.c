@@ -22,6 +22,9 @@ void objectSurfaces_init(ObjectSurfaces *objectSurfaces)
 
     objectSurfaces->whiteKing= SDL_LoadBMP(OBJECT_SURFACES_WHITE_KING_BMP_PATH);
     objectSurfaces->blackKing= SDL_LoadBMP(OBJECT_SURFACES_BLACK_KING_BMP_PATH);
+
+    objectSurfaces->moveCircle = SDL_LoadBMP(OBJECT_SURFACES_MOVE_CIRCLE_BMP_PATH);
+    objectSurfaces->captureCircle = SDL_LoadBMP(OBJECT_SURFACES_CAPTURE_CIRCLE_BMP_PATH);
 }
 
 
@@ -47,4 +50,7 @@ void objectSurfaces_freeAllSurfaces(ObjectSurfaces *objectSurfaces)
     SDL_FreeSurface(objectSurfaces->blackKnight);
     SDL_FreeSurface(objectSurfaces->blackBishop);
     SDL_FreeSurface(objectSurfaces->blackPawn);
+
+    SDL_FreeSurface(objectSurfaces->captureCircle);
+    SDL_FreeSurface(objectSurfaces->moveCircle);
 }

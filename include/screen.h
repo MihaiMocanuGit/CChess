@@ -28,7 +28,7 @@ typedef struct
 Screen screen_construct(const char* windowTitle, int w, int h, Uint32 windowFlags, Uint32 rendererFlags);
 void screen_free(Screen *screen);
 
-SDL_Rect screen_piecePositionToScreenPosition(const Screen *screen, const Piece *piece);
+SDL_Rect screen_tablePositionToScreenPosition(const Screen *screen, int tableX, int tableY);
 void screen_screenPositionToPiecePosition(const Screen *screen, int screenCursorX, int screenCursorY,
                                           int *outPieceX, int *outPieceY);
 

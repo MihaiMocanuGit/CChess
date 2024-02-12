@@ -22,6 +22,9 @@ void objectTextures_init(ObjectTextures* objectTextures, SDL_Renderer *renderer,
 
     objectTextures->whiteKing = SDL_CreateTextureFromSurface(renderer, surfaces->whiteKing);
     objectTextures->blackKing = SDL_CreateTextureFromSurface(renderer, surfaces->blackKing);
+
+    objectTextures->moveCircle = SDL_CreateTextureFromSurface(renderer, surfaces->moveCircle);
+    objectTextures->captureCircle = SDL_CreateTextureFromSurface(renderer, surfaces->captureCircle);
 }
 ObjectTextures objectTextures_construct(SDL_Renderer *renderer, const ObjectSurfaces *surfaces)
 {
@@ -46,4 +49,7 @@ void objectTextures_freeAllTextures(ObjectTextures* objectTextures)
     SDL_DestroyTexture(objectTextures->blackKnight);
     SDL_DestroyTexture(objectTextures->blackBishop);
     SDL_DestroyTexture(objectTextures->blackPawn);
+
+    SDL_DestroyTexture(objectTextures->moveCircle);
+    SDL_DestroyTexture(objectTextures->captureCircle);
 }
