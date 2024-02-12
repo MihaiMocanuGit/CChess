@@ -15,27 +15,32 @@ typedef enum
 }MoveType_e;
 typedef struct
 {
-    struct
-    {
-        int x,y;
-        MoveType_e type;
+    int x,y;
+    MoveType_e type;
 
-        // To make a move we might need information about another piece.
-        // for example:
-        //  1) With respect to the King, if we decide to castle we must
-        //  know where the rook is
-        //  2) With respect to the Pawn, if we use en'passant, it might
-        //  help us to know what pawn was attacked.
-        //  3) Maybe it would be better for every capture to remember which piece
-        //  we are attacking. It is redundant information as we can extract it from
-        //  the move position, but it is easier to already have the information
-        //  at hand.
-        Piece *movePartner;
+    // To make a move we might need information about another piece.
+    // for example:
+    //  1) With respect to the King, if we decide to castle we must
+    //  know where the rook is
+    //  2) With respect to the Pawn, if we use en'passant, it might
+    //  help us to know what pawn was attacked.
+    //  3) Maybe it would be better for every capture to remember which piece
+    //  we are attacking. It is redundant information as we can extract it from
+    //  the move position, but it is easier to already have the information
+    //  at hand.
+    Piece *movePartner;
 
 
-        //there are 64 spots on the table, so we can't have
-        // more than 64 valid spots for a piece to move in
-    } moves[TABLE_HEIGHT * TABLE_WIDTH];
+    //there are 64 spots on the table, so we can't have
+    // more than 64 valid spots for a piece to move in
+} Move;
+void pieceMove_initMove(Move *move, int x, int y, MoveType_e moveType, Piece *movePartner);
+Move pieceMove_constructMove(int x, int y, MoveType_e moveType, Piece *movePartner);
+
+typedef struct
+{
+
+    Move moves[TABLE_HEIGHT * TABLE_WIDTH];
 
 
     int noMoves;
