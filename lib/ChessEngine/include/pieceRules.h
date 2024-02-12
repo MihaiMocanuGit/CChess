@@ -47,7 +47,7 @@ typedef struct
     Piece *subjectPiece;
 }LegalMoves;
 void pieceMoves_initEmptyLegalMoves(LegalMoves *legalMoves);
-LegalMoves pieceMoves_constructEmptyLegalMoves();
+LegalMoves legalMoves_constructEmpty();
 
 void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingInCheck, LegalMoves *outMoves);
 void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool kingInCheck, LegalMoves *outMoves);

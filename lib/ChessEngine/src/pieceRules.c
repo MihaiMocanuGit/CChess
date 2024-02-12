@@ -24,7 +24,7 @@ void pieceMoves_initEmptyLegalMoves(LegalMoves *legalMoves)
     legalMoves->subjectPiece = NULL;
 }
 
-LegalMoves pieceMoves_constructEmptyLegalMoves()
+LegalMoves legalMoves_constructEmpty()
 {
     LegalMoves moves;
     pieceMoves_initEmptyLegalMoves(&moves);
@@ -38,12 +38,16 @@ void m_pieceMoves_addMove(LegalMoves *moves,  Move move)
 
 void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool kingInCheck, LegalMoves *outMoves)
 {
-    *outMoves = pieceMoves_constructEmptyLegalMoves();
+    //TODO: Special case for when the king is in check
+    // perhaps move the logic defined here to a private function
+    // we would need to know these moves when checking which piece is
+    // attacking the king
+    *outMoves = legalMoves_constructEmpty();
     const int startX = bishop->x;
     const int startY = bishop->y;
 
     const int upperLeftSteps = (startX < startY) ? startX : startY;
-    for (int i = 1; i < upperLeftSteps; ++i)
+    for (int i = 1; i <= upperLeftSteps; ++i)
     {
         const int newX = startX - i;
         const int newY = startY - i;
@@ -53,13 +57,14 @@ void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool ki
         }
         else
         {
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
+            if (bishop->team != table->table[newY][newX]->team)
+                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
             break;
         }
     }
 
     const int upperRightSteps = (TABLE_WIDTH - startX - 1 < startY) ? TABLE_WIDTH - startX - 1 : startY;
-    for (int i = 1; i < upperRightSteps; ++i)
+    for (int i = 1; i <= upperRightSteps; ++i)
     {
         const int newX = startX + i;
         const int newY = startY - i;
@@ -69,13 +74,14 @@ void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool ki
         }
         else
         {
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
+            if (bishop->team != table->table[newY][newX]->team)
+                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
             break;
         }
     }
 
     const int lowerLeftSteps = (startX < TABLE_HEIGHT - startY - 1) ? startX : TABLE_HEIGHT - startY - 1;
-    for (int i = 1; i < lowerLeftSteps; ++i)
+    for (int i = 1; i <= lowerLeftSteps; ++i)
     {
         const int newX = startX - i;
         const int newY = startY + i;
@@ -85,14 +91,15 @@ void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool ki
         }
         else
         {
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
+            if (bishop->team != table->table[newY][newX]->team)
+                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
             break;
         }
     }
 
     const int lowerRightSteps = (TABLE_WIDTH - startX - 1 < TABLE_HEIGHT - startY - 1)  ? TABLE_WIDTH - startX - 1
                                                                                         : TABLE_HEIGHT - startY - 1;
-    for (int i = 1; i < lowerRightSteps; ++i)
+    for (int i = 1; i <= lowerRightSteps; ++i)
     {
         const int newX = startX + i;
         const int newY = startY + i;
@@ -102,7 +109,8 @@ void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool ki
         }
         else
         {
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
+            if (bishop->team != table->table[newY][newX]->team)
+                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
             break;
         }
     }
