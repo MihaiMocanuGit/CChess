@@ -57,19 +57,33 @@ bool m_isThereKing(PieceTeam_e teamKing, const Table *table, int spotX, int spot
 {
     const int dirX[8] = {-1,  0,  1, -1, 1, -1,  0,  1};
     const int dirY[8] = {-1, -1, -1,  0, 0,  1,  1,  1};
-    for (int i = 0; i < 8; ++i)
-    {
-        const int x = dirX[i] + spotX;
-        const int y = dirY[i] + spotY;
 
-        if (pieceRules_areCoordsValid(x, y))
-        {
-            Piece *enemyKing = table->table[y][x];
-            //we will come across the king of the current player when we check a spot to move it
-            if (enemyKing != NULL && enemyKing->team != teamKing && enemyKing->type == KING)
-                return true;
-        }
-    }
+    //we can simplify this by checking the enemy team's reference to the king;
+    const Piece *enemyKing = team_king(&table->blackTeam);
+    if (teamKing == BLACK)
+        enemyKing = team_king(&table->whiteTeam);
+
+    int distX = spotX - enemyKing->x;
+    int distY = spotY - enemyKing->y;
+    if (distX < 0) distX *= -1;
+    if (distY < 0) distY *= -1;
+
+    return (distX <= 1 && distY <= 1);
+
+
+//    for (int i = 0; i < 8; ++i)
+//    {
+//        const int x = dirX[i] + spotX;
+//        const int y = dirY[i] + spotY;
+//
+//        if (pieceRules_areCoordsValid(x, y))
+//        {
+//            Piece *enemyKing = table->table[y][x];
+//            //we will come across the king of the current player when we check a spot to move it
+//            if (enemyKing != NULL && enemyKing->team != teamKing && enemyKing->type == KING)
+//                return true;
+//        }
+//    }
     return false;
 }
 
