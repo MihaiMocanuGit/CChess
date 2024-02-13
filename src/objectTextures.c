@@ -25,6 +25,10 @@ void objectTextures_init(ObjectTextures* objectTextures, SDL_Renderer *renderer,
 
     objectTextures->moveCircle = SDL_CreateTextureFromSurface(renderer, surfaces->moveCircle);
     objectTextures->captureCircle = SDL_CreateTextureFromSurface(renderer, surfaces->captureCircle);
+    objectTextures->promoteCircle = SDL_CreateTextureFromSurface(renderer, surfaces->promoteCircle);
+    objectTextures->castleCircle = SDL_CreateTextureFromSurface(renderer, surfaces->castleCircle);
+
+    objectTextures->selectHue = SDL_CreateTextureFromSurface(renderer, surfaces->selectHue);
 }
 ObjectTextures objectTextures_construct(SDL_Renderer *renderer, const ObjectSurfaces *surfaces)
 {
@@ -52,4 +56,8 @@ void objectTextures_freeAllTextures(ObjectTextures* objectTextures)
 
     SDL_DestroyTexture(objectTextures->moveCircle);
     SDL_DestroyTexture(objectTextures->captureCircle);
+
+    SDL_DestroyTexture(objectTextures->promoteCircle);
+    SDL_DestroyTexture(objectTextures->castleCircle);
+    SDL_DestroyTexture(objectTextures->selectHue);
 }

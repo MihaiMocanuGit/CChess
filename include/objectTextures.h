@@ -28,6 +28,10 @@ typedef struct
 
     SDL_Texture  *moveCircle;
     SDL_Texture  *captureCircle;
+    SDL_Texture  *promoteCircle;
+    SDL_Texture  *castleCircle;
+
+    SDL_Texture  *selectHue;
 
 } ObjectTextures;
 

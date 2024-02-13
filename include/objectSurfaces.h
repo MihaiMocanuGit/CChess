@@ -18,6 +18,9 @@
 #define OBJECT_SURFACES_BLACK_KING_BMP_PATH "../data/black_king.bmp"
 #define OBJECT_SURFACES_MOVE_CIRCLE_BMP_PATH "../data/move_circle.bmp"
 #define OBJECT_SURFACES_CAPTURE_CIRCLE_BMP_PATH "../data/capture_circle.bmp"
+#define OBJECT_SURFACES_PROMOTE_CIRCLE_BMP_PATH "../data/promote_circle.bmp"
+#define OBJECT_SURFACES_CASTLE_CIRCLE_BMP_PATH "../data/castle_circle.bmp"
+#define OBJECT_SURFACES_SELECT_HUE_BMP_PATH "../data/select_hue.bmp"
 
 typedef struct
 {
@@ -43,6 +46,10 @@ typedef struct
 
     SDL_Surface  *moveCircle;
     SDL_Surface  *captureCircle;
+    SDL_Surface  *promoteCircle;
+    SDL_Surface  *castleCircle;
+
+    SDL_Surface  *selectHue;
 } ObjectSurfaces;
 
 

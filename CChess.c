@@ -65,19 +65,33 @@ int main(int argc, char *argv[])
                     break;
             }
 
-
+            SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(&screen, heldPiece->x, heldPiece->y);
+            SDL_RenderCopy(screen.renderer, screen.textures.selectHue, NULL, &heldPieceRect);
             for (int i = 0; i < moves.noMoves; ++i)
             {
                 const int x = moves.moves[i].x;
                 const int y = moves.moves[i].y;
 
                 SDL_Rect rect = screen_tablePositionToScreenPosition(&screen, x, y);
-                if (moves.moves[i].type == MOVE)
-                    SDL_RenderCopy(screen.renderer, screen.textures.moveCircle, NULL, &rect);
-                else if (moves.moves[i].type == CAPTURE)
-                    SDL_RenderCopy(screen.renderer, screen.textures.captureCircle, NULL, &rect);
-                else
-                    SDL_RenderCopy(screen.renderer, screen.textures.captureCircle, NULL, &rect);
+                switch (moves.moves[i].type)
+                {
+
+                    case MOVE:
+                        SDL_RenderCopy(screen.renderer, screen.textures.moveCircle, NULL, &rect);
+                        break;
+                    case CAPTURE:
+                        SDL_RenderCopy(screen.renderer, screen.textures.captureCircle, NULL, &rect);
+                        break;
+                    case CASTLE:
+                        SDL_RenderCopy(screen.renderer, screen.textures.castleCircle, NULL, &rect);
+                        break;
+                    case PROMOTE:
+                        SDL_RenderCopy(screen.renderer, screen.textures.promoteCircle, NULL, &rect);
+                        break;
+                    case EN_PASSANT:
+                        SDL_RenderCopy(screen.renderer, screen.textures.captureCircle, NULL, &rect);
+                        break;
+                }
             }
 
         }

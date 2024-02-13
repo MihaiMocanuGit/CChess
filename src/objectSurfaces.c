@@ -25,6 +25,10 @@ void objectSurfaces_init(ObjectSurfaces *objectSurfaces)
 
     objectSurfaces->moveCircle = SDL_LoadBMP(OBJECT_SURFACES_MOVE_CIRCLE_BMP_PATH);
     objectSurfaces->captureCircle = SDL_LoadBMP(OBJECT_SURFACES_CAPTURE_CIRCLE_BMP_PATH);
+    objectSurfaces->promoteCircle = SDL_LoadBMP(OBJECT_SURFACES_PROMOTE_CIRCLE_BMP_PATH);
+    objectSurfaces->castleCircle = SDL_LoadBMP(OBJECT_SURFACES_CASTLE_CIRCLE_BMP_PATH);
+
+    objectSurfaces->selectHue = SDL_LoadBMP(OBJECT_SURFACES_SELECT_HUE_BMP_PATH);
 }
 
 
@@ -53,4 +57,8 @@ void objectSurfaces_freeAllSurfaces(ObjectSurfaces *objectSurfaces)
 
     SDL_FreeSurface(objectSurfaces->captureCircle);
     SDL_FreeSurface(objectSurfaces->moveCircle);
+    SDL_FreeSurface(objectSurfaces->promoteCircle);
+    SDL_FreeSurface(objectSurfaces->castleCircle);
+
+    SDL_FreeSurface(objectSurfaces->selectHue);
 }
