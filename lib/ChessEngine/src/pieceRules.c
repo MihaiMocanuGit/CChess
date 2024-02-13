@@ -55,12 +55,37 @@ void m_pieceRules_moveGenerator(const Table *table, PieceTeam_e subjectTeam, int
         }
     }
 }
+
+void pieceRules_findMovesRook(const Piece *rook, const Table *table, bool kingInCheck, LegalMoves *outMoves)
+{
+    *outMoves = legalMoves_constructEmpty();
+    const int startX = rook->x;
+    const int startY = rook->y;
+
+    const int leftSteps = startX;
+    m_pieceRules_moveGenerator(table, rook->team, startX, startY, -1, 0, leftSteps, outMoves);
+
+
+    const int rightSteps = TABLE_WIDTH - startX - 1;
+    m_pieceRules_moveGenerator(table, rook->team, startX, startY, +1, 0, rightSteps, outMoves);
+
+
+    const int upSteps = startY;
+    m_pieceRules_moveGenerator(table, rook->team, startX, startY, 0, -1, upSteps, outMoves);
+
+    const int downSteps = TABLE_HEIGHT - startY - 1;
+    m_pieceRules_moveGenerator(table, rook->team, startX, startY, 0, +1, downSteps, outMoves);
+}
+
+
 void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool kingInCheck, LegalMoves *outMoves)
 {
     //TODO: Special case for when the king is in check
-    // perhaps move the logic defined here to a private function
-    // we would need to know these moves when checking which piece is
-    // attacking the king
+    // perhaps move the logic defined here to a private function. And use the private function when
+    // the piece is not in check. If it's in check it would be more complicated as we need to compute
+    // the moves a piece can make even if the king is in check as we need to find which tiles are under
+    // attack by the piece that is checking the king.
+
     *outMoves = legalMoves_constructEmpty();
     const int startX = bishop->x;
     const int startY = bishop->y;

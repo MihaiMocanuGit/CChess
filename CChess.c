@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
                     pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
                     break;
                 case ROOK:
-                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    pieceRules_findMovesRook(heldPiece, &table, false, &moves);
                     break;
                 case QUEEN:
                     pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
