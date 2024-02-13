@@ -51,7 +51,10 @@ void m_leftBtnPressed(MouseControl *mouse)
         }
         else if (*heldPiece != NULL && table->table[pieceY][pieceX] != NULL)
         {
-            //opposing piece could be taken. This would be an attack, not a simple move
+            // if we are selecting another piece of the same color as our team, place the held
+            // piece back and pick the other one
+            if (table->table[pieceY][pieceX]->team == (*heldPiece)->team)
+                *heldPiece = table->table[pieceY][pieceX];
         }
 
     }
