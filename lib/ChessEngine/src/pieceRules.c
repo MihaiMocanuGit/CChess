@@ -117,7 +117,7 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingIn
         //en'passant when the piece to be captured is to the left
         leftPiece = table->table[startY][startX - 1];
         if (m_canApplyEnPassant(leftPiece, pawn))
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(startX - 1, startY + dir, CAPTURE, leftPiece));
+            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(startX - 1, startY + dir, EN_PASSANT, leftPiece));
 
     }
 
@@ -132,7 +132,7 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingIn
         //en'passant when the piece to be captured is to the right
         rightPiece = table->table[startY][startX + 1];
         if (m_canApplyEnPassant(rightPiece, pawn))
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(startX + 1, startY + dir, CAPTURE, rightPiece));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(startX + 1, startY + dir, EN_PASSANT, rightPiece));
 
     }
 
@@ -254,6 +254,7 @@ void pieceRules_findMovesQueen(const Piece *queen, const Table *table, bool king
     m_pieceRules_moveGenerator(table, queen->team, startX, startY, 0, +1, downSteps, outMoves);
 }
 
+
 void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingInCheck, LegalMoves *outMoves)
 {
     *outMoves = legalMoves_constructEmpty();
@@ -276,4 +277,66 @@ void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingIn
                 m_pieceMoves_addMove(outMoves, pieceMove_constructMove(x, y, CAPTURE, table->table[y][x]));
         }
     }
+
+    //castling
+
+    //left castle
+    const int y = king->y;
+    Piece *leftRook = table->table[y][0];
+    if (leftRook != NULL && leftRook->movesMade == 0 && king->movesMade == 0)
+    {
+        bool freeSpace = true;
+        for (int x = 1; x < king->x; ++x)
+        {
+            if (table->table[y][x] != NULL)
+            {
+                freeSpace = false;
+                break;
+            }
+        }
+        if (freeSpace)
+        {
+            bool safeSpace = true;
+            //castling is not allowed if the king would go through a spot that is under attack
+            for (int x = king->x - 2; x <= king->x; ++x)
+            {
+                if (!pieceRules_canKingBeInSpot(king->team, table, king->x, king->y))
+                    safeSpace = false;
+
+            }
+
+            if (safeSpace)
+                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(king->x - 2, y, CASTLE, leftRook));
+        }
+    }
+
+    Piece *rightRook = table->table[y][7];
+    if (rightRook != NULL && rightRook->movesMade == 0 && king->movesMade == 0)
+    {
+        bool freeSpace = true;
+        for (int x = king->x + 1; x <= 6; ++x)
+        {
+            if (table->table[y][x] != NULL)
+            {
+                freeSpace = false;
+                break;
+            }
+        }
+        if (freeSpace)
+        {
+            bool safeSpace = true;
+            //castling is not allowed if the king would go through a spot that is under attack
+            for (int x = king->x; x <= king->x + 2; ++x)
+            {
+                if (!pieceRules_canKingBeInSpot(king->team, table, king->x, king->y))
+                    safeSpace = false;
+
+            }
+
+            if (safeSpace)
+                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(king->x + 2, y, CASTLE, rightRook));
+        }
+    }
+
+
 }
