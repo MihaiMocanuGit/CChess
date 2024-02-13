@@ -46,22 +46,22 @@ int main(int argc, char *argv[])
             switch (heldPiece->type)
             {
                 case PAWN:
-                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    pieceRules_findMovesPawn(heldPiece, &table, false, &moves);
                     break;
                 case BISHOP:
                     pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
                     break;
                 case KNIGHT:
-                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    pieceRules_findMovesKnight(heldPiece, &table, false, &moves);
                     break;
                 case ROOK:
                     pieceRules_findMovesRook(heldPiece, &table, false, &moves);
                     break;
                 case QUEEN:
-                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    pieceRules_findMovesQueen(heldPiece, &table, false, &moves);
                     break;
                 case KING:
-                    pieceRules_findMovesBishop(heldPiece, &table, false, &moves);
+                    pieceRules_findMovesKing(heldPiece, &table, false, &moves);
                     break;
             }
 
