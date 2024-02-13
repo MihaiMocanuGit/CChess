@@ -15,6 +15,14 @@ void m_initTeamDefaultTop(Team *team, PieceTeam_e color)
     //  0   R   K   B   Q   K   B   K   R
     //  1   P   P   P   P   P   P   P   P
     team_initEmpty(team, color);
+
+    //inserting the King first in order to not have to deal with subsequent element swaps
+    //inside the team array that can happen when a team is captured or a pawn promoted (perhaps)
+    //This way, if the king is the first element and we know that it cannot be captured (Without loosing the game)
+    //we will keep it at the front of the array;
+    Piece king = piece_construct(color, KING, 4, 0);
+    team_addPiece(team, &king);
+
     for (int i = 0; i < 8; ++i)
     {
         Piece pawn = piece_construct(color, PAWN, i, 1);
@@ -23,7 +31,6 @@ void m_initTeamDefaultTop(Team *team, PieceTeam_e color)
 
     Piece rookLeft = piece_construct(color, ROOK, 0, 0);
     team_addPiece(team, &rookLeft);
-    team->rooks[0] = m_getLastAddedPiece(team);
 
     Piece knightLeft = piece_construct(color, KNIGHT, 1, 0);
     team_addPiece(team, &knightLeft);
@@ -32,12 +39,13 @@ void m_initTeamDefaultTop(Team *team, PieceTeam_e color)
     team_addPiece(team, &bishopLeft);
 
 
-    Piece queenBlack = piece_construct(color, QUEEN, 3, 0);
-    team_addPiece(team, &queenBlack);
+    Piece queen = piece_construct(color, QUEEN, 3, 0);
+    team_addPiece(team, &queen);
 
-    Piece kingBlack = piece_construct(color, KING, 4, 0);
-    team_addPiece(team, &kingBlack);
-    team->king = m_getLastAddedPiece(team);
+    // The first element of the array will be king
+//    Piece king = piece_construct(color, KING, 4, 0);
+//    team_addPiece(team, &king);
+//    team->king = m_getLastAddedPiece(team);
 
 
     Piece bishopRight = piece_construct(color, BISHOP, 5, 0);
@@ -48,7 +56,6 @@ void m_initTeamDefaultTop(Team *team, PieceTeam_e color)
 
     Piece rookRight = piece_construct(color, ROOK, 7, 0);
     team_addPiece(team, &rookRight);
-    team->rooks[1] = m_getLastAddedPiece(team);
 
 
 }

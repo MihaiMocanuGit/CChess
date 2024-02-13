@@ -11,13 +11,6 @@ typedef struct
     Piece pieces[TEAM_INITIAL_NO_PIECES];
     unsigned noPieces;
 
-    //direct access reference to the 2 rooks in the pieces array.
-    //Comes in handy for castling
-    Piece *rooks[2];
-
-    //direct access reference to the king in the pieces array
-    //Comes in handy for castling / checking if the king is in Check
-    Piece *king;
 
     //The pieces of this team that are taken by an enemy are moved into this array
     Piece lostPieces[TEAM_INITIAL_NO_PIECES];
@@ -40,6 +33,8 @@ void team_addPiece(Team *team, const Piece *piece);
 void team_initEmpty(Team *team, PieceTeam_e color);
 Team team_constructEmpty(PieceTeam_e color);
 
+//if the pieces array did not get corrupted, the first element of the array should always be the king;
+Piece *team_king(const Team *team);
 
 
 
