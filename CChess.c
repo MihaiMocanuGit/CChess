@@ -76,6 +76,8 @@ int main(int argc, char *argv[])
                     SDL_RenderCopy(screen.renderer, screen.textures.moveCircle, NULL, &rect);
                 else if (moves.moves[i].type == CAPTURE)
                     SDL_RenderCopy(screen.renderer, screen.textures.captureCircle, NULL, &rect);
+                else
+                    SDL_RenderCopy(screen.renderer, screen.textures.captureCircle, NULL, &rect);
             }
 
         }
