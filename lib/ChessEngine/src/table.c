@@ -12,7 +12,7 @@ static Piece* m_getLastAddedPiece(Team *team)
 void m_initTeamDefaultTop(Team *team, PieceTeam_e color)
 {   //
     //      0|W 1|B 2|W 3|B 4|W 5|B 6|W 7|B
-    //  0   R   K   B   Q/K K/Q B   K   R
+    //  0   R   K   B   Q   K   B   K   R
     //  1   P   P   P   P   P   P   P   P
     team_initEmpty(team, color);
     for (int i = 0; i < 8; ++i)
@@ -31,25 +31,14 @@ void m_initTeamDefaultTop(Team *team, PieceTeam_e color)
     Piece bishopLeft = piece_construct(color, BISHOP, 2, 0);
     team_addPiece(team, &bishopLeft);
 
-    //The queen will be placed on a spot of the same color
-    if (color == WHITE)
-    {
-        Piece queenBlack = piece_construct(WHITE, QUEEN, 3, 0);
-        team_addPiece(team, &queenBlack);
 
-        Piece kingBlack = piece_construct(WHITE, KING, 4, 0);
-        team_addPiece(team, &kingBlack);
-        team->king = m_getLastAddedPiece(team);
-    }
-    else
-    {
-        Piece kingWhite = piece_construct(BLACK, KING, 3, 0);
-        team_addPiece(team, &kingWhite);
-        team->king = m_getLastAddedPiece(team);
+    Piece queenBlack = piece_construct(color, QUEEN, 3, 0);
+    team_addPiece(team, &queenBlack);
 
-        Piece queenWhite = piece_construct(BLACK, QUEEN, 4, 0);
-        team_addPiece(team, &queenWhite);
-    }
+    Piece kingBlack = piece_construct(color, KING, 4, 0);
+    team_addPiece(team, &kingBlack);
+    team->king = m_getLastAddedPiece(team);
+
 
     Piece bishopRight = piece_construct(color, BISHOP, 5, 0);
     team_addPiece(team, &bishopRight);
