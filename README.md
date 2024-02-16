@@ -40,3 +40,15 @@ writing C++ code until now.
 
 Moreover, thanks to the GUI app developed in parallel, I can also get familiar with 
 SDL2.
+
+### A project with a backstory:
+It is a bit funny, but I actually am not a big fan of Chess. I am doing this because a few years back
+I promised a friend from highschool that I will make a chess program that will finally be capable of beating him.
+
+I tried to create one at that time in C++ but as I was not experienced with app development or bigger projects I
+gave up when I realised that my whole design was actually heavily depending on Undefined Behavior. 
+
+As most experiences with UB go, the app was apparently working as expected for quite some time until abruptly it
+wasn't anymore. 
+
+So I could say that this project is my revenge against UB.
