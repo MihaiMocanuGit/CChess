@@ -101,6 +101,14 @@ int main(int argc, char *argv[])
                 case SDL_QUIT:
                     quit = true;
                     break;
+                case SDL_WINDOWEVENT:
+                    switch (event.window.event)
+                    {
+                        case SDL_WINDOWEVENT_EXPOSED:
+                            updateScreen = true;
+                            break;
+                    }
+                    break;
                 case SDL_MOUSEBUTTONDOWN:
                     mouseControl_btnPressed(&event.button, &heldPiece, &table, &screen);
                     updateScreen = true;
