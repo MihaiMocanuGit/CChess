@@ -32,9 +32,6 @@ typedef struct
     int movePartnerY;
     PieceType_e movePartnerType;
 
-
-    //there are 64 spots on the table, so we can't have
-    // more than 64 valid spots for a piece to move in
 } Move;
 void pieceMove_initMove(Move *move, int x, int y);
 Move pieceMove_constructMove(int x, int y);
@@ -54,7 +51,7 @@ Move pieceMove_constructCastle(int kingToX, int kingToY, int rookFromX, int rook
 typedef struct
 {
 
-    Move moves[TABLE_HEIGHT * TABLE_WIDTH];
+    Move moves[31];
 
 
     int noMoves;
