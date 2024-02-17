@@ -4,20 +4,85 @@
 
 #include "kingMoveValidator.h"
 
-void pieceMove_initMove(Move *move, int x, int y, MoveType_e moveType, Piece *movePartner)
+void pieceMove_initMove(Move *move, int x, int y)
 {
     move->x = x;
     move->y = y;
-    move->type = moveType;
-    move->movePartner = movePartner;
+    move->type = MOVE;
+    move->movePartnerX = -1;
+    move->movePartnerY = -1;
 }
-
-Move pieceMove_constructMove(int x, int y, MoveType_e moveType, Piece *movePartner)
+Move pieceMove_constructMove(int x, int y)
 {
-    Move move;
-    pieceMove_initMove(&move, x, y, moveType, movePartner);
+    Move move = {.x = x, .y = y, .type = MOVE};
     return move;
 }
+void pieceMove_initCapture(Move *move, int x, int y, PieceType_e movePartnerType)
+{
+    move->x = x;
+    move->y = y;
+    move->type = CAPTURE;
+    move->movePartnerX = x;
+    move->movePartnerY = y;
+    move->movePartnerType = movePartnerType;
+}
+Move pieceMove_constructCapture(int x, int y, PieceType_e movePartnerType)
+{
+    Move move = {.x = x, .y = y, .type = CAPTURE,
+                 .movePartnerX = x, .movePartnerY = y, .movePartnerType = movePartnerType};
+    return move;
+}
+void pieceMove_initEnPassant(Move *move, int pawnToX, int pawnToY, int enemyPawnFromX, int enemyPawnFromY)
+{
+    move->x = pawnToX;
+    move->y = pawnToY;
+    move->type = EN_PASSANT;
+    move->movePartnerX = enemyPawnFromX;
+    move->movePartnerY = enemyPawnFromY;
+    move->movePartnerType = PAWN;
+}
+Move pieceMove_constructEnPassant(int pawnToX, int pawnToY, int enemyPawnFromX, int enemyPawnFromY)
+{
+    Move move = {.x = pawnToX, .y = pawnToY, .type = EN_PASSANT,
+            .movePartnerX = enemyPawnFromX, .movePartnerY = enemyPawnFromY, .movePartnerType = PAWN};
+    return move;
+}
+
+void pieceMove_initPromote(Move *move, int x, int y, PieceType_e promoteTo)
+{
+    move->x = x;
+    move->y = y;
+    move->type = PROMOTE;
+    move->movePartnerX = x;
+    move->movePartnerY = y;
+    move->movePartnerType = promoteTo;
+}
+Move pieceMove_constructPromote(int x, int y, PieceType_e promoteTo)
+{
+    Move move = {.x = x, .y = y, .type = PROMOTE,
+                 .movePartnerX = x, .movePartnerY = y, .movePartnerType = promoteTo};
+    return move;
+}
+
+void pieceMove_initCastle(Move *move, int kingToX, int kingToY, int rookFromX, int rookFromY)
+{
+    move->x = kingToX;
+    move->y = kingToY;
+    move->type = PROMOTE;
+    move->movePartnerX = rookFromX;
+    move->movePartnerY = rookFromY;
+    move->movePartnerType = ROOK;
+}
+Move pieceMove_constructCastle(int kingToX, int kingToY, int rookFromX, int rookFromY)
+{
+    Move move = {.x = kingToX, .y = kingToY, .type = CASTLE,
+            .movePartnerX = rookFromX, .movePartnerY = rookFromY, .movePartnerType = CASTLE};
+    return move;
+}
+
+
+
+
 
 void legalMoves_initEmpty(LegalMoves *legalMoves)
 {
@@ -65,12 +130,12 @@ void m_pieceRules_moveGenerator(const Table *table, PieceTeam_e subjectTeam, int
 
         if (table->table[newY][newX] == NULL)
         {
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, MOVE, NULL));
+            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY));
         }
         else
         {
             if (subjectTeam != table->table[newY][newX]->team)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, CAPTURE, table->table[newY][newX]));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructCapture(newX, newY, table->table[newY][newX]->type));
             break;
         }
     }
@@ -99,7 +164,10 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingIn
     //promotion
     if (startY == 0 || startY == TABLE_HEIGHT)
     {
-        m_pieceMoves_addMove(outMoves, pieceMove_constructMove(startX, startY, PROMOTE, NULL));
+        m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, BISHOP));
+        m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, ROOK));
+        m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, KNIGHT));
+        m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, QUEEN));
         return; //we cannot do anything more. Excluding this case now means that we do not have to validate
                 //the y coord in the other cases!!!!!!!
     }
@@ -108,14 +176,14 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingIn
     int newX = startX;
     int newY = startY + dir;
     if (table->table[newY][newX] == NULL)
-        m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, MOVE, NULL));
+        m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY));
 
     // only for the first move the pawn can move 2 tiles
     newX = startX;
     newY = startY + dir * 2;
     if (pawn->movesMade == 0 && table->table[startY + dir][newX] == NULL && table->table[newY][newX] == NULL)
         //by checking for pawn->movesMade == 0, we are sure that newY is in bounds
-        m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY, MOVE, NULL));
+        m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY));
 
 
 
@@ -124,12 +192,12 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingIn
         //generic capture
         Piece *leftPiece = table->table[startY + dir][startX - 1];
         if (leftPiece != NULL && leftPiece->team != pawn->team)
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(startX - 1, startY + dir, CAPTURE, leftPiece));
+            m_pieceMoves_addMove(outMoves, pieceMove_constructCapture(startX - 1, startY + dir, leftPiece->type));
 
         //en'passant when the piece to be captured is to the left
         leftPiece = table->table[startY][startX - 1];
         if (m_canApplyEnPassant(leftPiece, pawn))
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(startX - 1, startY + dir, EN_PASSANT, leftPiece));
+            m_pieceMoves_addMove(outMoves, pieceMove_constructEnPassant(startX - 1, startY + dir, leftPiece->x, leftPiece->y));
 
     }
 
@@ -139,12 +207,12 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingIn
         //generic capture
         Piece *rightPiece = table->table[startY + dir][startX + 1];
         if (rightPiece != NULL && rightPiece->team != pawn->team)
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(startX + 1, startY + dir, CAPTURE, rightPiece));
+            m_pieceMoves_addMove(outMoves, pieceMove_constructCapture(startX + 1, startY + dir, rightPiece->type));
 
         //en'passant when the piece to be captured is to the right
         rightPiece = table->table[startY][startX + 1];
         if (m_canApplyEnPassant(rightPiece, pawn))
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(startX + 1, startY + dir, EN_PASSANT, rightPiece));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructEnPassant(startX + 1, startY + dir, rightPiece->x, rightPiece->y));
 
     }
 
@@ -223,9 +291,9 @@ void pieceRules_findMovesKnight(const Piece *knight, const Table *table, bool ki
         if (pieceRules_areCoordsValid(x, y))
         {
             if (table->table[y][x] == NULL)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(x, y, MOVE, NULL));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(x, y));
             else if (table->table[y][x]->team != knight->team)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(x, y, CAPTURE, table->table[y][x]));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructCapture(x, y, table->table[y][x]->type));
         }
     }
 }
@@ -289,9 +357,9 @@ void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingIn
                 pieceRules_canKingBeInSpot(king->team, table, x, y))
         {
             if (table->table[y][x] == NULL)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(x, y, MOVE, NULL));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(x, y));
             else
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(x, y, CAPTURE, table->table[y][x]));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructCapture(x, y, table->table[y][x]->type));
         }
     }
 
@@ -323,7 +391,7 @@ void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingIn
             }
 
             if (safeSpace)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(king->x - 2, y, CASTLE, leftRook));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructCastle(king->x - 2, y, leftRook->x, leftRook->y));
         }
     }
 
@@ -351,7 +419,7 @@ void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingIn
             }
 
             if (safeSpace)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(king->x + 2, y, CASTLE, rightRook));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructCastle(king->x + 2, y, rightRook->x, rightRook->y));
         }
     }
 

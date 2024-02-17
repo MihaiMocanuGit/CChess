@@ -28,14 +28,28 @@ typedef struct
     //  we are attacking. It is redundant information as we can extract it from
     //  the move position, but it is easier to already have the information
     //  at hand.
-    Piece *movePartner;
+    int movePartnerX;
+    int movePartnerY;
+    PieceType_e movePartnerType;
 
 
     //there are 64 spots on the table, so we can't have
     // more than 64 valid spots for a piece to move in
 } Move;
-void pieceMove_initMove(Move *move, int x, int y, MoveType_e moveType, Piece *movePartner);
-Move pieceMove_constructMove(int x, int y, MoveType_e moveType, Piece *movePartner);
+void pieceMove_initMove(Move *move, int x, int y);
+Move pieceMove_constructMove(int x, int y);
+
+void pieceMove_initCapture(Move *move, int x, int y, PieceType_e movePartnerType);
+Move pieceMove_constructCapture(int x, int y, PieceType_e movePartnerType);
+
+void pieceMove_initEnPassant(Move *move, int pawnToX, int pawnToY, int enemyPawnFromX, int enemyPawnFromY);
+Move pieceMove_constructEnPassant(int pawnToX, int pawnToY, int enemyPawnFromX, int enemyPawnFromY);
+
+void pieceMove_initPromote(Move *move, int x, int y, PieceType_e promoteTo);
+Move pieceMove_constructPromote(int x, int y, PieceType_e promoteTo);
+
+void pieceMove_initCastle(Move *move, int kingToX, int kingToY, int rookFromX, int rookFromY);
+Move pieceMove_constructCastle(int kingToX, int kingToY, int rookFromX, int rookFromY);
 
 typedef struct
 {
