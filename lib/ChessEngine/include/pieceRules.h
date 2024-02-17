@@ -44,9 +44,12 @@ typedef struct
 
 
     int noMoves;
-    Piece *subjectPiece;
+    int startX;
+    int startY;
 }LegalMoves;
-void pieceMoves_initEmptyLegalMoves(LegalMoves *legalMoves);
+void legalMoves_initEmptyWithStart(LegalMoves *legalMoves, int startX, int startY);
+void legalMoves_initEmpty(LegalMoves *legalMoves);
+LegalMoves legalMoves_constructEmptyWithStart(int startX, int startY);
 LegalMoves legalMoves_constructEmpty();
 
 void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingInCheck, LegalMoves *outMoves);

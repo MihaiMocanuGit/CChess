@@ -19,17 +19,27 @@ Move pieceMove_constructMove(int x, int y, MoveType_e moveType, Piece *movePartn
     return move;
 }
 
-
-void pieceMoves_initEmptyLegalMoves(LegalMoves *legalMoves)
+void legalMoves_initEmpty(LegalMoves *legalMoves)
 {
     legalMoves->noMoves = 0;
-    legalMoves->subjectPiece = NULL;
+}
+void legalMoves_initEmptyWithStart(LegalMoves *legalMoves, int startX, int startY)
+{
+    legalMoves_initEmpty(legalMoves);
+    legalMoves->startX = startX;
+    legalMoves->startY = startY;
 }
 
 LegalMoves legalMoves_constructEmpty()
 {
     LegalMoves moves;
-    pieceMoves_initEmptyLegalMoves(&moves);
+    legalMoves_initEmpty(&moves);
+    return moves;
+}
+LegalMoves legalMoves_constructEmptyWithStart(int startX, int startY)
+{
+    LegalMoves moves;
+    legalMoves_initEmptyWithStart(&moves, startX, startY);
     return moves;
 }
 
@@ -78,9 +88,11 @@ bool m_canApplyEnPassant(const Piece* pieceToBeCaptured, const Piece *subjectPaw
 }
 void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingInCheck, LegalMoves *outMoves)
 {
-    *outMoves = legalMoves_constructEmpty();
+
     const int startX = pawn->x;
     const int startY = pawn->y;
+    *outMoves = legalMoves_constructEmptyWithStart(startX, startY);
+
     //we will make the assumption that white is always at the bottom of the table.
     const int dir = (pawn->team == WHITE)? -1 : 1;
 
@@ -144,9 +156,10 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingIn
 }
 void pieceRules_findMovesRook(const Piece *rook, const Table *table, bool kingInCheck, LegalMoves *outMoves)
 {
-    *outMoves = legalMoves_constructEmpty();
+
     const int startX = rook->x;
     const int startY = rook->y;
+    *outMoves = legalMoves_constructEmptyWithStart(startX, startY);
 
     const int leftSteps = startX;
     m_pieceRules_moveGenerator(table, rook->team, startX, startY, -1, 0, leftSteps, outMoves);
@@ -172,9 +185,10 @@ void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool ki
     // the moves a piece can make even if the king is in check as we need to find which tiles are under
     // attack by the piece that is checking the king.
 
-    *outMoves = legalMoves_constructEmpty();
+
     const int startX = bishop->x;
     const int startY = bishop->y;
+    *outMoves = legalMoves_constructEmptyWithStart(startX, startY);
 
     const int upperLeftSteps = (startX < startY) ? startX : startY;
     m_pieceRules_moveGenerator(table, bishop->team, startX, startY, -1, -1, upperLeftSteps, outMoves);
@@ -194,9 +208,10 @@ void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool ki
 
 void pieceRules_findMovesKnight(const Piece *knight, const Table *table, bool kingInCheck, LegalMoves *outMoves)
 {
-    *outMoves = legalMoves_constructEmpty();
+
     const int startX = knight->x;
     const int startY = knight->y;
+    *outMoves = legalMoves_constructEmptyWithStart(startX, startY);
 
     const int dirX[] = {-2, -2, -1, -1, +1, +1, +2, +2};
     const int dirY[] = {-1, +1, -2, +2, -2, +2, -1, +1};
@@ -217,9 +232,10 @@ void pieceRules_findMovesKnight(const Piece *knight, const Table *table, bool ki
 
 void pieceRules_findMovesQueen(const Piece *queen, const Table *table, bool kingInCheck, LegalMoves *outMoves)
 {
-    *outMoves = legalMoves_constructEmpty();
+
     const int startX = queen->x;
     const int startY = queen->y;
+    *outMoves = legalMoves_constructEmptyWithStart(startX, startY);
 
     //same as bishop rules
     const int upperLeftSteps = (startX < startY) ? startX : startY;
@@ -257,9 +273,10 @@ void pieceRules_findMovesQueen(const Piece *queen, const Table *table, bool king
 
 void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingInCheck, LegalMoves *outMoves)
 {
-    *outMoves = legalMoves_constructEmpty();
+
     const int startX = king->x;
     const int startY = king->y;
+    *outMoves = legalMoves_constructEmptyWithStart(startX, startY);
 
     const int dirX[8] = {-1,  0,  1, -1, 1, -1,  0,  1};
     const int dirY[8] = {-1, -1, -1,  0, 0,  1,  1,  1};
@@ -340,3 +357,5 @@ void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingIn
 
 
 }
+
+
