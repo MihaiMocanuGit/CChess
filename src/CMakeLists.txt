@@ -8,6 +8,9 @@ set(SOURCES objectSurfaces.c objectTextures.c ../include/objectSurfaces.h ../inc
         ../include/mouseControl.h
         vector.c
         ../include/vector.h
+        UiComponent.c
+        ../include/UiComponent.h
+
 )
 
 add_library(AppSources ${SOURCES})
