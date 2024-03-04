@@ -6,6 +6,8 @@
 #include "../lib/ChessEngine/include/table.h"
 #include "screen.h"
 
+///THIS WILL BECOME DEPRECATED AFTER TableMouseController is implemented
+
 void mouseControl_btnPressed(SDL_MouseButtonEvent *e, Piece **heldPiece, Table *table, Screen* screen);
 
 
