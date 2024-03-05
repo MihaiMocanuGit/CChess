@@ -11,8 +11,9 @@
 typedef enum
 {
     EMPTY_HAND,                     //we have nothing in hand, happens after a move
-    CLICKED_NEW_PIECE,              //we had an empty hand, and then we pick up a new piece
-    CLICKED_SAME_TEAM_PIECE,        //already had a piece in hand and we get another one
+    //UNINIT_STATE,                   //represents an uninitialised state, it's not exactly empty yet
+    CLICKED_PICK_UP_PIECE,          //we had an empty hand, and then we picked up a new piece
+    //CLICKED_SAME_TEAM_PIECE,        //already had a piece in hand and we get another one
     CLICKED_CAPTURE_PIECE,          //we have a piece in hand and want to make a legal capture
     CLICKED_ADVANCE_PIECE,          //we have a piece in hand and want to make a legal move
     CLICKED_CASTLE_KING,            //we have the king in hand and want to make a legal castle
@@ -27,7 +28,7 @@ typedef struct
     Screen * const screen;
     Table * const table;
 
-    const SDL_Rect region;
+    //const SDL_Rect region;
 
     //In table coords, not screen coords
     SDL_Point oldClickPos;
@@ -41,10 +42,11 @@ typedef struct
     // Ideally we should have this data in a single spot and access it through references from different places
     // Where should this spot be, would it be fine for it to live in main, if we make sure it never gets out of scope?
     // We would need to update this location after every click
-    LegalMoves * const movesForHeldPiece;
+    //LegalMoves * const movesForHeldPiece;
+    LegalMoves movesForHeldPiece;
 }TableMouseController;
 
-TableMouseController tableMouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table, const SDL_Rect *region);
+TableMouseController tableMouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table); //, const SDL_Rect *region);
 TableClickType_e tableMouseController_onClick(TableMouseController *controller, const SDL_MouseButtonEvent *e);
 
 
