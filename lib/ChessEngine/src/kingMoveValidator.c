@@ -153,7 +153,7 @@ bool m_areThereKnights(PieceTeam_e teamKing, const Table *table, int spotX, int 
     const int dirX[8] = {-2, -2, -1, -1, +1, +1, +2, +2};
     const int dirY[8] = {-1, +1, -2, +2, -2, +2, -1, +1};
 
-    for (int i = 0; i < 7; ++i)
+    for (int i = 0; i < 8; ++i)
     {
         const int x = dirX[i] + spotX;
         const int y = dirY[i] + spotY;
