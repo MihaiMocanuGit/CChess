@@ -38,12 +38,14 @@ typedef struct
     SDL_Point newClickPos;
     TableClickType_e newClickType;
 
+
     // We need to have access to the possible moves the current held piece can do
     // Ideally we should have this data in a single spot and access it through references from different places
     // Where should this spot be, would it be fine for it to live in main, if we make sure it never gets out of scope?
     // We would need to update this location after every click
     //LegalMoves * const movesForHeldPiece;
     LegalMoves movesForHeldPiece;
+    int makeMoveAtIndex;
 }TableMouseController;
 
 TableMouseController tableMouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table); //, const SDL_Rect *region);

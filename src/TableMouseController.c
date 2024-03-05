@@ -152,7 +152,7 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
                         case EN_PASSANT:
                             break;
                     }
-
+                    controller->makeMoveAtIndex = i;
                     return controller->newClickType;
                 }
             }
@@ -169,6 +169,9 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
 
 TableClickType_e m_rightBtnPressed(TableMouseController *controller, const SDL_MouseButtonEvent *e)
 {
+    controller->oldClickType = EMPTY_HAND;
+    controller->newClickType = EMPTY_HAND;
+    controller->movesForHeldPiece = legalMoves_constructEmpty();
     return CLICKED_CANCEL;
 }
 

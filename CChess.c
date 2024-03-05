@@ -6,13 +6,16 @@
 
 #include "screen.h"
 #include "mouseControl.h"
+#include "TableMouseController.h"
 
-
-void getMoves(const Piece *heldPiece, const Table *table, LegalMoves *outMoves);
 
 void renderMoves(Screen *screen, const LegalMoves *moves);
 
 void makeMove(const LegalMoves *moves, int moveIndex, Table *table);
+
+
+void applyPieceClickEffects(const TableClickType_e *clickType, Table *table, Screen *screen,
+                            TableMouseController *mouseController, bool showMoves,  unsigned *turn);
 
 int main(int argc, char *argv[])
 {
@@ -22,13 +25,15 @@ int main(int argc, char *argv[])
     SDL_Init(SDL_INIT_VIDEO);
     Screen screen = screen_construct("CChess", 800, 600, 0, 0);
 
+    TableMouseController mouseControllerWhite = tableMouseController_construct(WHITE, &screen, &table);
+    TableClickType_e clickTypeWhite;
 
-
-
-    Piece* heldPiece = NULL;
+    TableMouseController mouseControllerBlack = tableMouseController_construct(BLACK, &screen, &table);
+    TableClickType_e clickTypeBlack;
 
     bool quit = false;
     bool updateScreen = true;
+    unsigned turn = 0;
     while (!quit)
     {
         if (updateScreen)
@@ -36,21 +41,16 @@ int main(int argc, char *argv[])
             SDL_RenderClear(screen.renderer);
             SDL_RenderCopy(screen.renderer, screen.textures.background, NULL, NULL);
 
-            screen_drawTeams(&screen, &table);
-
-            if (heldPiece != NULL)
+            if (turn % 2 == 0)
             {
-                LegalMoves moves = legalMoves_constructEmpty();
-
-                getMoves(heldPiece, &table, &moves);
-
-                SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(&screen, heldPiece->x, heldPiece->y);
-                SDL_RenderCopy(screen.renderer, screen.textures.selectHue, NULL, &heldPieceRect);
-                renderMoves(&screen, &moves);
-
-                makeMove(&moves, 0, &table);
-
+                applyPieceClickEffects(&clickTypeWhite, &table, &screen, &mouseControllerWhite, true, &turn);
             }
+            else
+            {
+                applyPieceClickEffects(&clickTypeBlack, &table, &screen, &mouseControllerBlack, true, &turn);
+            }
+
+            screen_drawTeams(&screen, &table);
 
             SDL_RenderPresent(screen.renderer);
             updateScreen = false;
@@ -58,8 +58,7 @@ int main(int argc, char *argv[])
 
         SDL_Event event;
         SDL_WaitEvent(&event);
-        //while (SDL_PollEvent(&event) != 0)
-        //{
+
         switch (event.type)
         {
             case SDL_QUIT:
@@ -74,18 +73,40 @@ int main(int argc, char *argv[])
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                mouseControl_btnPressed(&event.button, &heldPiece, &table, &screen);
+                clickTypeWhite = tableMouseController_onClick(&mouseControllerWhite, &event.button);
+                clickTypeBlack = tableMouseController_onClick(&mouseControllerBlack, &event.button);
                 updateScreen = true;
                 break;
         }
-        //}
-
     }
 
     screen_free(&screen);
     SDL_Quit();
     return 0;
 }
+
+void applyPieceClickEffects(const TableClickType_e *clickType, Table *table, Screen *screen,
+                            TableMouseController *mouseController, bool showMoves, unsigned *turn)
+{
+    if ((*clickType) == CLICKED_PICK_UP_PIECE)
+    {
+        SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(screen, (*mouseController).oldClickPos.x,
+                                                                      (*mouseController).oldClickPos.y);
+
+        if (showMoves)
+        {
+            SDL_RenderCopy((*screen).renderer, (*screen).textures.selectHue, NULL, &heldPieceRect);
+            renderMoves(screen, &(*mouseController).movesForHeldPiece);
+        }
+    }
+    else if((*clickType) != CLICKED_INVALID && (*clickType) != EMPTY_HAND && (*clickType) != CLICKED_CANCEL)
+    {
+        makeMove(&(*mouseController).movesForHeldPiece, (*mouseController).makeMoveAtIndex, table);
+        (*mouseController).movesForHeldPiece = legalMoves_constructEmpty();
+        (*turn)++;
+    }
+}
+
 void makeMove(const LegalMoves *moves, int moveIndex, Table *table)
 {
     int startX = moves->startX;
@@ -150,30 +171,4 @@ void renderMoves(Screen *screen, const LegalMoves *moves)
         }
     }
 }
-
-void getMoves(const Piece *heldPiece, const Table *table, LegalMoves *outMoves)
-{
-    switch (heldPiece->type)
-    {
-        case PAWN:
-            pieceRules_findMovesPawn(heldPiece, table, false, outMoves);
-            break;
-        case BISHOP:
-            pieceRules_findMovesBishop(heldPiece, table, false, outMoves);
-            break;
-        case KNIGHT:
-            pieceRules_findMovesKnight(heldPiece, table, false, outMoves);
-            break;
-        case ROOK:
-            pieceRules_findMovesRook(heldPiece, table, false, outMoves);
-            break;
-        case QUEEN:
-            pieceRules_findMovesQueen(heldPiece, table, false, outMoves);
-            break;
-        case KING:
-            pieceRules_findMovesKing(heldPiece, table, false, outMoves);
-            break;
-    }
-}
-
 
