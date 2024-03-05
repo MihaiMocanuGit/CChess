@@ -107,6 +107,7 @@ void applyPieceClickEffects(const TableClickType_e *clickType, Table *table, Scr
     }
 }
 
+//TODO: Move this to the chess engine lib
 void makeMove(const LegalMoves *moves, int moveIndex, Table *table)
 {
     int startX = moves->startX;
@@ -117,6 +118,7 @@ void makeMove(const LegalMoves *moves, int moveIndex, Table *table)
 
     table->table[startY][startX]->movesMade++;
     const Move *move = &moves->moves[moveIndex];
+    //TODO: Implement all movement types
     switch (move->type)
     {
         case EN_PASSANT:
