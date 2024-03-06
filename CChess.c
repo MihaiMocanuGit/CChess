@@ -5,7 +5,6 @@
 #include "lib/ChessEngine/chessStructure.h"
 
 #include "screen.h"
-#include "mouseControl.h"
 #include "TableMouseController.h"
 
 
