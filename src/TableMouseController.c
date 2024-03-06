@@ -2,7 +2,6 @@
 
 
 
-
 TableMouseController tableMouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table)//, const SDL_Rect *region)
 {
     TableMouseController result = {

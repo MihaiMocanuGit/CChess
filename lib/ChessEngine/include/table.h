@@ -3,6 +3,7 @@
 
 #include "piece.h"
 #include "team.h"
+#include "move.h"
 
 
 #define TABLE_WIDTH 8
@@ -41,6 +42,7 @@ typedef struct
 
 
 void table_init(Table *table);
+void table_capturePiece(Table *table, const Move *move);
 
 
 

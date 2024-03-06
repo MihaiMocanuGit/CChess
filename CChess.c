@@ -6,6 +6,7 @@
 
 #include "screen.h"
 #include "TableMouseController.h"
+#include "move.h"
 
 
 void renderMoves(Screen *screen, const LegalMoves *moves);
@@ -122,11 +123,8 @@ void makeMove(const LegalMoves *moves, int moveIndex, Table *table)
     {
         case EN_PASSANT:
         case CAPTURE:
-            //remove captured piece from its team and move it to the capturedPiecesArray
-            //remove the reference to said piece from table
-            //the captured piece is move->movePartner. It might not live at newX and newY if it's en'passant
-            //when removing from the team pieces, use the swap-last and remove method,
-            //do not forget to update the reference from table to the swapped piece
+            table_capturePiece(table, move);
+
         case MOVE:
             //move the reference to the subjectPiece from the old spot in table to the new one
 

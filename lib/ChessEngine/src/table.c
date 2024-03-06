@@ -1,4 +1,5 @@
 #include "table.h"
+#include "move.h"
 
 #include <string.h>
 
@@ -118,5 +119,50 @@ void table_init(Table *table)
         Piece *piece = &table->blackTeam.pieces[i];
         table->table[piece->y][piece->x] = piece;
     }
+}
+
+void table_capturePiece(Table *table, const Move *move)
+{
+    //remove captured piece from its team and move it to the capturedPiecesArray
+    //remove the reference to said piece from table
+    //the captured piece is move->movePartner. It might not live at newX and newY if it's en'passant
+    //when removing from the team pieces, use the swap-last and remove method,
+    //do not forget to update the reference from table to the swapped piece
+
+    const Piece *capturedPiece = table->table[move->movePartnerY][move->movePartnerX];
+    Team *team = &table->whiteTeam; //suppressing pointer may be null warning
+    switch (capturedPiece->team)
+    {
+        case WHITE:
+            team = &table->whiteTeam;
+            break;
+        case BLACK:
+            team = &table->blackTeam;
+            break;
+    }
+
+    //TODO: make this a team function
+    team->lostPieces[table->whiteTeam.noPieces++] = *capturedPiece;
+
+    for (int i = 0; i < team->noPieces; ++i)
+    {
+        if(team->pieces[i].x == capturedPiece->x && team->pieces[i].y == capturedPiece->y)
+        {
+            //remove by swap with end idiom
+            team->pieces[i] = team->pieces[--(team->noPieces)];
+
+            //removing the reference owned by table
+            table->table[move->movePartnerY][move->movePartnerX] = NULL;
+
+            //this is now the swapped piece
+            int x = team->pieces[i].x;
+            int y = team->pieces[i].y;
+
+            //updating reference in table
+            table->table[y][x] = &(team->pieces[i]);
+            break;
+        }
+    }
+
 }
 

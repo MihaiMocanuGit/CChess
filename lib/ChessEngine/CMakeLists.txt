@@ -3,7 +3,8 @@
 cmake_minimum_required(VERSION 3.26)
 
 set(CHESS_ENGINE_HEADER_LIST "chessStructure.h" "include/piece.h" "include/table.h" "include/team.h"
-        "include/pieceRules.h" "include/kingMoveValidator.h")
+        "include/pieceRules.h" "include/kingMoveValidator.h"
+        src/move.c)
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(ChessEngine src/piece.c src/table.c src/team.c src/pieceRules.c src/kingMoveValidator.c
