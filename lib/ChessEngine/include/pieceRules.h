@@ -4,6 +4,9 @@
 #include "piece.h"
 #include "table.h"
 
+//TODO: Using KingValidator, implement separate moving logic for when the king is in check, meaning, generate all the moves
+// that would uncheck the king
+
 void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingInCheck, LegalMoves *outMoves);
 void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool kingInCheck, LegalMoves *outMoves);
 void pieceRules_findMovesRook(const Piece *rook, const Table *table, bool kingInCheck, LegalMoves *outMoves);
