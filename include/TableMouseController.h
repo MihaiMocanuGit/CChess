@@ -31,11 +31,15 @@ typedef struct
     //const SDL_Rect region;
 
     //In table coords, not screen coords
+    //TODO: Rename this to picked up piece coords
     SDL_Point oldClickPos;
+    //TODO: Separate click type for picked up piece, meaning, add new tags specifically for this
     TableClickType_e oldClickType; // this might not be useful
 
     //In table coords, not screen coords
+    //TODO: Rename this to next click/move coords
     SDL_Point newClickPos;
+    //TODO: Separate click type, meaning, add new tags specifically for this
     TableClickType_e newClickType;
 
 
