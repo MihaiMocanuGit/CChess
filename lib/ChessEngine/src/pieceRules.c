@@ -114,7 +114,7 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
     for (int i = 0; i < outMoves->noMoves; ++i)
     {
         const Move *move = &outMoves->moves[i];
-        const Piece *subject = tempTable.table[outMoves->startY][outMoves->startY];
+        const Piece *subject = tempTable.table[outMoves->startY][outMoves->startX];
         const Team *subjectTeam;
         switch (subject->team)
         {
@@ -133,8 +133,7 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
         {
             case EN_PASSANT:
             case CAPTURE:
-                //m_tempCapture(&tempTable, outMoves, i, &capturedPieceTeam, &capturedPieceIndex);
-                break;
+                m_tempCapture(&tempTable, outMoves, i, &capturedPieceTeam, &capturedPieceIndex);
             case MOVE:
                 m_tempMove(&tempTable, outMoves, i);
                 break;
@@ -157,8 +156,8 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
             case EN_PASSANT:
                 break;
             case CAPTURE:
-                //m_reverseTempMove(&tempTable, outMoves, i);
-                //m_reverseTempCapture(&tempTable, outMoves, i, capturedPieceTeam, capturedPieceIndex);
+                m_reverseTempMove(&tempTable, outMoves, i);
+                m_reverseTempCapture(&tempTable, outMoves, i, capturedPieceTeam, capturedPieceIndex);
                 break;
             case MOVE:
                 m_reverseTempMove(&tempTable, outMoves, i);

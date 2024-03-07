@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 
         SDL_Event event;
         SDL_WaitEvent(&event);
-        SDL_Event debugging;
+        //SDL_Event debugging;
         switch (event.type)
         {
             case SDL_QUIT:
@@ -69,8 +69,12 @@ int main(int argc, char *argv[])
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
-
-                SDL_WaitEvent(&debugging);
+                // Cursor does not work in Clion's debugger right after a mouse event
+                // I could not find another way to solve this, so I am purposely throwing away a few
+                // events in order to get rid of the event that is blocking my cursor
+                //SDL_WaitEvent(&debugging);
+                //SDL_WaitEvent(&debugging);
+                //SDL_WaitEvent(&debugging);
                 if (turn % 2 == 0)
                     clickTypeWhite = tableMouseController_onClick(&mouseControllerWhite, &event.button);
                 else
