@@ -11,7 +11,6 @@
 
 void renderMoves(Screen *screen, const LegalMoves *moves);
 
-void makeMove(const LegalMoves *moves, int moveIndex, Table *table);
 
 
 void applyPieceClickEffects(const TableClickType_e *clickType, Table *table, Screen *screen,
@@ -101,46 +100,13 @@ void applyPieceClickEffects(const TableClickType_e *clickType, Table *table, Scr
     }
     else if((*clickType) != CLICKED_INVALID && (*clickType) != EMPTY_HAND && (*clickType) != CLICKED_CANCEL)
     {
-        makeMove(&(*mouseController).movesForHeldPiece, (*mouseController).makeMoveAtIndex, table);
+        table_makeMove(table, &(*mouseController).movesForHeldPiece, (*mouseController).makeMoveAtIndex);
         (*mouseController).movesForHeldPiece = legalMoves_constructEmpty();
         (*turn)++;
     }
 }
 
-//TODO: Move this to the chess engine lib
-void makeMove(const LegalMoves *moves, int moveIndex, Table *table)
-{
-    int startX = moves->startX;
-    int startY = moves->startY;
 
-    int newX = moves->moves[moveIndex].x;
-    int newY = moves->moves[moveIndex].y;
-
-    table->table[startY][startX]->movesMade++;
-    const Move *move = &moves->moves[moveIndex];
-    //TODO: Implement all movement types
-    switch (move->type)
-    {
-        case EN_PASSANT:
-        case CAPTURE:
-            table_capturePiece(table, move);
-
-        case MOVE:
-            //move the reference to the subjectPiece from the old spot in table to the new one
-
-            table->table[newY][newX] = table->table[startY][startX];
-            table->table[startY][startX] = NULL;
-
-            //change the position known by the piece.
-            table->table[newY][newX]->x = newX;
-            table->table[newY][newX]->y = newY;
-            break;
-        case CASTLE:
-            break;
-        case PROMOTE:
-            break;
-    }
-}
 void renderMoves(Screen *screen, const LegalMoves *moves)
 {
     for (int i = 0; i < (*moves).noMoves; ++i)

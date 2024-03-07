@@ -121,13 +121,14 @@ void table_init(Table *table)
     }
 }
 
-void table_capturePiece(Table *table, const Move *move)
+void table_capturePiece(Table *table, const LegalMoves *moves, int moveIndex)
 {
     //remove captured piece from its team and move it to the capturedPiecesArray
     //remove the reference to said piece from table
     //the captured piece is move->movePartner. It might not live at newX and newY if it's en'passant
     //when removing from the team pieces, use the swap-last and remove method,
     //do not forget to update the reference from table to the swapped piece
+    const Move *move = &moves->moves[moveIndex];
 
     const Piece *capturedPiece = table->table[move->movePartnerY][move->movePartnerX];
     Team *team = &table->whiteTeam; //suppressing pointer may be null warning
@@ -166,3 +167,42 @@ void table_capturePiece(Table *table, const Move *move)
 
 }
 
+void table_movePiece(Table *table, const LegalMoves *moves, int moveIndex)
+{
+    int startX = moves->startX;
+    int startY = moves->startY;
+
+    int newX = moves->moves[moveIndex].x;
+    int newY = moves->moves[moveIndex].y;
+
+    //move the reference to the subjectPiece from the old spot in table to the new one
+    table->table[newY][newX] = table->table[startY][startX];
+    table->table[startY][startX] = NULL;
+
+    //change the position known by the piece.
+    table->table[newY][newX]->x = newX;
+    table->table[newY][newX]->y = newY;
+}
+
+void table_makeMove(Table *table, const LegalMoves *moves, int moveIndex)
+{
+    int startX = moves->startX;
+    int startY = moves->startY;
+
+    table->table[startY][startX]->movesMade++;
+    const Move *move = &moves->moves[moveIndex];
+    //TODO: Implement all movement types
+    switch (move->type)
+    {
+        case EN_PASSANT:
+        case CAPTURE:
+            table_capturePiece(table, moves, moveIndex);
+        case MOVE:
+            table_movePiece(table, moves, moveIndex);
+            break;
+        case CASTLE:
+            break;
+        case PROMOTE:
+            break;
+    }
+}
