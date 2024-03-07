@@ -59,9 +59,9 @@ bool m_isThereKing(PieceTeam_e teamKing, const Table *table, int spotX, int spot
     const int dirY[8] = {-1, -1, -1,  0, 0,  1,  1,  1};
 
     //we can simplify this by checking the enemy team's reference to the king;
-    const Piece *enemyKing = team_king(&table->blackTeam);
+    const Piece *enemyKing = team_king_const(&table->blackTeam);
     if (teamKing == BLACK)
-        enemyKing = team_king(&table->whiteTeam);
+        enemyKing = team_king_const(&table->whiteTeam);
 
     int distX = spotX - enemyKing->x;
     int distY = spotY - enemyKing->y;

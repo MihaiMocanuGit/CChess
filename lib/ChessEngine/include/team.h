@@ -7,6 +7,7 @@
 #define TEAM_INITIAL_NO_PIECES 32
 typedef struct
 {
+    bool kinkInCheck;
     PieceTeam_e teamColor;
     Piece pieces[TEAM_INITIAL_NO_PIECES];
     unsigned noPieces;
@@ -34,7 +35,8 @@ void team_initEmpty(Team *team, PieceTeam_e color);
 Team team_constructEmpty(PieceTeam_e color);
 
 //if the pieces array did not get corrupted, the first element of the array should always be the king;
-Piece *team_king(const Team *team);
+const Piece *team_king_const(const Team *team);
+Piece *team_king(Team *team);
 
 
 

@@ -5,7 +5,6 @@
 #include "kingMoveValidator.h"
 #include "move.h"
 
-
 void m_pieceMoves_addMove(LegalMoves *moves,  Move move)
 {
     moves->moves[moves->noMoves++] = move;
@@ -38,6 +37,142 @@ void m_pieceRules_moveGenerator(const Table *table, PieceTeam_e subjectTeam, int
         }
     }
 }
+
+
+void m_tempMove(Table *table, const LegalMoves *moves, int moveIndex)
+{
+    int startX = moves->startX;
+    int startY = moves->startY;
+
+    int newX = moves->moves[moveIndex].x;
+    int newY = moves->moves[moveIndex].y;
+
+    //move the reference to the subjectPiece from the old spot in table to the new one
+    table->table[newY][newX] = table->table[startY][startX];
+    table->table[startY][startX] = NULL;
+
+    //change the position known by the piece.
+    table->table[newY][newX]->x = newX;
+    table->table[newY][newX]->y = newY;
+}
+void m_reverseTempMove(Table *table, const LegalMoves *moves, int moveIndex)
+{
+    int startX = moves->startX;
+    int startY = moves->startY;
+
+    int newX = moves->moves[moveIndex].x;
+    int newY = moves->moves[moveIndex].y;
+
+    //move the reference to the subjectPiece from the old spot in table to the new one
+    table->table[startY][startX] = table->table[newY][newX];
+    table->table[newY][newX] = NULL;
+
+    //change the position known by the piece.
+    table->table[startY][startX]->x = startX;
+    table->table[startY][startX]->y = startX;
+}
+void m_tempCapture(Table *table, const LegalMoves *moves, int moveIndex, Team **outCapturedPieceTeam, int* outCapturedPieceIndex)
+{
+
+    const Move *move = &moves->moves[moveIndex];
+
+    const Piece *capturedPiece = table->table[move->movePartnerY][move->movePartnerX];
+    *outCapturedPieceTeam = &table->whiteTeam; //suppressing pointer may be null warning
+    switch (capturedPiece->team)
+    {
+        case WHITE:
+            *outCapturedPieceTeam = &table->whiteTeam;
+            break;
+        case BLACK:
+            *outCapturedPieceTeam = &table->blackTeam;
+            break;
+    }
+
+    for (int i = 0; i < (*outCapturedPieceTeam)->noPieces; ++i)
+    {
+        if ((*outCapturedPieceTeam)->pieces[i].x == capturedPiece->x &&
+            (*outCapturedPieceTeam)->pieces[i].y == capturedPiece->y)
+        {
+            //removing the reference owned by table
+            table->table[move->movePartnerY][move->movePartnerX] = NULL;
+            *outCapturedPieceIndex = i;
+
+            break;
+        }
+    }
+}
+void m_reverseTempCapture(Table *table, const LegalMoves *moves, int moveIndex, Team *capturedPieceTeam, int capturedPieceIndex)
+{
+
+    Piece *capturedPiece = &capturedPieceTeam->pieces[capturedPieceIndex];
+    table->table[capturedPiece->y][capturedPiece->x] = capturedPiece;
+}
+void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves *outMoves)
+{
+    Table tempTable = *table;
+    for (int i = 0; i < outMoves->noMoves; ++i)
+    {
+        const Move *move = &outMoves->moves[i];
+        const Piece *subject = tempTable.table[outMoves->startY][outMoves->startY];
+
+        //make temporal move
+        int capturedPieceIndex;
+        Team *capturedPieceTeam;
+        switch (move->type)
+        {
+            case EN_PASSANT:
+            case CAPTURE:
+                m_tempCapture(&tempTable, outMoves, i, &capturedPieceTeam, &capturedPieceIndex);
+            case MOVE:
+                m_tempMove(&tempTable, outMoves, i);
+                break;
+            case CASTLE:
+                break;
+            case PROMOTE:
+                break;
+        }
+
+        //check if the king is in check after move
+        const Team *subjectTeam;
+
+        switch (subject->team)
+        {
+            case WHITE:
+                subjectTeam = &table->whiteTeam;
+                break;
+            case BLACK:
+                subjectTeam = &table->blackTeam;
+                break;
+        }
+
+        //remove the move if it results in a check
+        int kingX = team_king_const(subjectTeam)->x;
+        int kingY = team_king_const(subjectTeam)->y;
+        if ( !pieceRules_canKingBeInSpot(subjectTeam->teamColor, &tempTable, kingX, kingY))
+        {
+            outMoves->moves[i] = outMoves->moves[--outMoves->noMoves];
+            i--;
+        }
+
+        //reverse the move so that the table is back to its original state
+        switch (move->type)
+        {
+            case EN_PASSANT:
+                break;
+            case CAPTURE:
+                m_reverseTempMove(&tempTable, outMoves, i);
+                m_reverseTempCapture(&tempTable, outMoves, i, capturedPieceTeam, capturedPieceIndex);
+                break;
+            case MOVE:
+                m_reverseTempMove(&tempTable, outMoves, i);
+                break;
+            case CASTLE:
+                break;
+            case PROMOTE:
+                break;
+        }
+    }
+}
 bool m_canApplyEnPassant(const Piece* pieceToBeCaptured, const Piece *subjectPawn)
 {
     if (pieceToBeCaptured != NULL && pieceToBeCaptured->type == PAWN && pieceToBeCaptured->team != subjectPawn->team &&
@@ -49,7 +184,7 @@ bool m_canApplyEnPassant(const Piece* pieceToBeCaptured, const Piece *subjectPaw
     }
     return false;
 }
-void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingInCheck, LegalMoves *outMoves)
+void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, LegalMoves *outMoves)
 {
 
     const int startX = pawn->x;
@@ -114,13 +249,9 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, bool kingIn
 
     }
 
-
-
-
-
-
+    m_removeBadMovesInCheck(pawn, table, outMoves);
 }
-void pieceRules_findMovesRook(const Piece *rook, const Table *table, bool kingInCheck, LegalMoves *outMoves)
+void pieceRules_findMovesRook(const Piece *rook, const Table *table, LegalMoves *outMoves)
 {
 
     const int startX = rook->x;
@@ -140,10 +271,12 @@ void pieceRules_findMovesRook(const Piece *rook, const Table *table, bool kingIn
 
     const int downSteps = TABLE_HEIGHT - startY - 1;
     m_pieceRules_moveGenerator(table, rook->team, startX, startY, 0, +1, downSteps, outMoves);
+
+    m_removeBadMovesInCheck(rook, table, outMoves);
 }
 
 
-void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool kingInCheck, LegalMoves *outMoves)
+void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, LegalMoves *outMoves)
 {
     //TODO: Special case for when the king is in check
     // perhaps move the logic defined here to a private function. And use the private function when
@@ -170,9 +303,11 @@ void pieceRules_findMovesBishop(const Piece *bishop, const Table *table, bool ki
     const int lowerRightSteps = (TABLE_WIDTH - startX - 1 < TABLE_HEIGHT - startY - 1)  ? TABLE_WIDTH - startX - 1
                                                                                         : TABLE_HEIGHT - startY - 1;
     m_pieceRules_moveGenerator(table, bishop->team, startX, startY, +1, +1, lowerRightSteps, outMoves);
+
+    m_removeBadMovesInCheck(bishop, table, outMoves);
 }
 
-void pieceRules_findMovesKnight(const Piece *knight, const Table *table, bool kingInCheck, LegalMoves *outMoves)
+void pieceRules_findMovesKnight(const Piece *knight, const Table *table, LegalMoves *outMoves)
 {
 
     const int startX = knight->x;
@@ -194,9 +329,11 @@ void pieceRules_findMovesKnight(const Piece *knight, const Table *table, bool ki
                 m_pieceMoves_addMove(outMoves, pieceMove_constructCapture(x, y, table->table[y][x]->type));
         }
     }
+
+    m_removeBadMovesInCheck(knight, table, outMoves);
 }
 
-void pieceRules_findMovesQueen(const Piece *queen, const Table *table, bool kingInCheck, LegalMoves *outMoves)
+void pieceRules_findMovesQueen(const Piece *queen, const Table *table, LegalMoves *outMoves)
 {
 
     const int startX = queen->x;
@@ -234,10 +371,12 @@ void pieceRules_findMovesQueen(const Piece *queen, const Table *table, bool king
 
     const int downSteps = TABLE_HEIGHT - startY - 1;
     m_pieceRules_moveGenerator(table, queen->team, startX, startY, 0, +1, downSteps, outMoves);
+
+    m_removeBadMovesInCheck(queen, table, outMoves);
 }
 
 
-void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingInCheck, LegalMoves *outMoves)
+void pieceRules_findMovesKing(const Piece *king, const Table *table, LegalMoves *outMoves)
 {
 
     const int startX = king->x;
@@ -284,7 +423,10 @@ void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingIn
             for (int x = king->x - 2; x <= king->x; ++x)
             {
                 if (!pieceRules_canKingBeInSpot(king->team, table, king->x, king->y))
+                {
                     safeSpace = false;
+                    break;
+                }
 
             }
 
@@ -312,7 +454,10 @@ void pieceRules_findMovesKing(const Piece *king, const Table *table, bool kingIn
             for (int x = king->x; x <= king->x + 2; ++x)
             {
                 if (!pieceRules_canKingBeInSpot(king->team, table, king->x, king->y))
+                {
                     safeSpace = false;
+                    break;
+                }
 
             }
 

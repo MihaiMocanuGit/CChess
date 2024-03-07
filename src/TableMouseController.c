@@ -49,22 +49,22 @@ void m_computeMoves(const Table *table, SDL_Point heldPieceCoords, LegalMoves *o
     switch (heldPiece->type)
     {
         case PAWN:
-            pieceRules_findMovesPawn(heldPiece, table, false, outMoves);
+            pieceRules_findMovesPawn(heldPiece, table, outMoves);
             break;
         case BISHOP:
-            pieceRules_findMovesBishop(heldPiece, table, false, outMoves);
+            pieceRules_findMovesBishop(heldPiece, table, outMoves);
             break;
         case KNIGHT:
-            pieceRules_findMovesKnight(heldPiece, table, false, outMoves);
+            pieceRules_findMovesKnight(heldPiece, table, outMoves);
             break;
         case ROOK:
-            pieceRules_findMovesRook(heldPiece, table, false, outMoves);
+            pieceRules_findMovesRook(heldPiece, table, outMoves);
             break;
         case QUEEN:
-            pieceRules_findMovesQueen(heldPiece, table, false, outMoves);
+            pieceRules_findMovesQueen(heldPiece, table, outMoves);
             break;
         case KING:
-            pieceRules_findMovesKing(heldPiece, table, false, outMoves);
+            pieceRules_findMovesKing(heldPiece, table, outMoves);
             break;
     }
 }
