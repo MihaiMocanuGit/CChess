@@ -154,7 +154,6 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
         switch (move->type)
         {
             case EN_PASSANT:
-                break;
             case CAPTURE:
                 m_reverseTempMove(&tempTable, outMoves, i);
                 m_reverseTempCapture(&tempTable, outMoves, i, capturedPieceTeam, capturedPieceIndex);
