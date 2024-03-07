@@ -122,7 +122,8 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
         {
             case EN_PASSANT:
             case CAPTURE:
-                m_tempCapture(&tempTable, outMoves, i, &capturedPieceTeam, &capturedPieceIndex);
+                //m_tempCapture(&tempTable, outMoves, i, &capturedPieceTeam, &capturedPieceIndex);
+                break;
             case MOVE:
                 m_tempMove(&tempTable, outMoves, i);
                 break;
@@ -145,14 +146,10 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
                 break;
         }
 
-        //remove the move if it results in a check
+        //mark the move that it must be removed if it results in a check
         int kingX = team_king_const(subjectTeam)->x;
         int kingY = team_king_const(subjectTeam)->y;
-        if ( !pieceRules_canKingBeInSpot(subjectTeam->teamColor, &tempTable, kingX, kingY))
-        {
-            outMoves->moves[i] = outMoves->moves[--outMoves->noMoves];
-            i--;
-        }
+        bool badMove = !pieceRules_canKingBeInSpot(subjectTeam->teamColor, &tempTable, kingX, kingY);
 
         //reverse the move so that the table is back to its original state
         switch (move->type)
@@ -160,8 +157,8 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
             case EN_PASSANT:
                 break;
             case CAPTURE:
-                m_reverseTempMove(&tempTable, outMoves, i);
-                m_reverseTempCapture(&tempTable, outMoves, i, capturedPieceTeam, capturedPieceIndex);
+                //m_reverseTempMove(&tempTable, outMoves, i);
+                //m_reverseTempCapture(&tempTable, outMoves, i, capturedPieceTeam, capturedPieceIndex);
                 break;
             case MOVE:
                 m_reverseTempMove(&tempTable, outMoves, i);
@@ -170,6 +167,13 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
                 break;
             case PROMOTE:
                 break;
+        }
+
+        //remove the bad move
+        if (badMove)
+        {
+            outMoves->moves[i] = outMoves->moves[--(outMoves->noMoves)];
+            i--;
         }
     }
 }
