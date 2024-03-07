@@ -120,6 +120,40 @@ void table_init(Table *table)
         table->table[piece->y][piece->x] = piece;
     }
 }
+void table_deepCopy(Table *newTable, const Table *original)
+{
+    newTable->state = original->state;
+    newTable->turn = original->turn;
+
+    newTable->whiteTeam = original->whiteTeam;
+    newTable->blackTeam = original->blackTeam;
+
+    memset(newTable->table, 0, sizeof(newTable->table));
+
+    int i;
+    for (i = 0; i < newTable->whiteTeam.noPieces && i < newTable->blackTeam.noPieces; ++i)
+    {
+        Piece *piece = &newTable->whiteTeam.pieces[i];
+        newTable->table[piece->y][piece->x] = piece;
+
+        piece = &newTable->blackTeam.pieces[i];
+        newTable->table[piece->y][piece->x] = piece;
+    }
+
+    //if the rules of chess remain unchanged, we should not enter into the next
+    //2 for loops, as the no of pieces between teams is equal (both equal to 16)
+    for (; i < newTable->whiteTeam.noPieces; ++i)
+    {
+        Piece *piece = &newTable->whiteTeam.pieces[i];
+        newTable->table[piece->y][piece->x] = piece;
+    }
+
+    for (; i < newTable->blackTeam.noPieces; ++i)
+    {
+        Piece *piece = &newTable->blackTeam.pieces[i];
+        newTable->table[piece->y][piece->x] = piece;
+    }
+}
 
 void table_capturePiece(Table *table, const LegalMoves *moves, int moveIndex)
 {
@@ -206,3 +240,4 @@ void table_makeMove(Table *table, const LegalMoves *moves, int moveIndex)
             break;
     }
 }
+

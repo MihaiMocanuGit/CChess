@@ -39,7 +39,7 @@ void m_pieceRules_moveGenerator(const Table *table, PieceTeam_e subjectTeam, int
 }
 
 
-void m_tempMove(Table *table, const LegalMoves *moves, int moveIndex)
+void m_tempMove(Table *tempTable, const LegalMoves *moves, int moveIndex)
 {
     int startX = moves->startX;
     int startY = moves->startY;
@@ -47,15 +47,15 @@ void m_tempMove(Table *table, const LegalMoves *moves, int moveIndex)
     int newX = moves->moves[moveIndex].x;
     int newY = moves->moves[moveIndex].y;
 
-    //move the reference to the subjectPiece from the old spot in table to the new one
-    table->table[newY][newX] = table->table[startY][startX];
-    table->table[startY][startX] = NULL;
+    //move the reference to the subjectPiece from the old spot in tempTable to the new one
+    tempTable->table[newY][newX] = tempTable->table[startY][startX];
+    tempTable->table[startY][startX] = NULL;
 
     //change the position known by the piece.
-    table->table[newY][newX]->x = newX;
-    table->table[newY][newX]->y = newY;
+    tempTable->table[newY][newX]->x = newX;
+    tempTable->table[newY][newX]->y = newY;
 }
-void m_reverseTempMove(Table *table, const LegalMoves *moves, int moveIndex)
+void m_reverseTempMove(Table *tempTable, const LegalMoves *moves, int moveIndex)
 {
     int startX = moves->startX;
     int startY = moves->startY;
@@ -63,28 +63,28 @@ void m_reverseTempMove(Table *table, const LegalMoves *moves, int moveIndex)
     int newX = moves->moves[moveIndex].x;
     int newY = moves->moves[moveIndex].y;
 
-    //move the reference to the subjectPiece from the old spot in table to the new one
-    table->table[startY][startX] = table->table[newY][newX];
-    table->table[newY][newX] = NULL;
+    //move the reference to the subjectPiece from the old spot in tempTable to the new one
+    tempTable->table[startY][startX] = tempTable->table[newY][newX];
+    tempTable->table[newY][newX] = NULL;
 
     //change the position known by the piece.
-    table->table[startY][startX]->x = startX;
-    table->table[startY][startX]->y = startX;
+    tempTable->table[startY][startX]->x = startX;
+    tempTable->table[startY][startX]->y = startX;
 }
-void m_tempCapture(Table *table, const LegalMoves *moves, int moveIndex, Team **outCapturedPieceTeam, int* outCapturedPieceIndex)
+void m_tempCapture(Table *tempTable, const LegalMoves *moves, int moveIndex, Team **outCapturedPieceTeam, int* outCapturedPieceIndex)
 {
 
     const Move *move = &moves->moves[moveIndex];
 
-    const Piece *capturedPiece = table->table[move->movePartnerY][move->movePartnerX];
-    *outCapturedPieceTeam = &table->whiteTeam; //suppressing pointer may be null warning
+    const Piece *capturedPiece = tempTable->table[move->movePartnerY][move->movePartnerX];
+    *outCapturedPieceTeam = &tempTable->whiteTeam; //suppressing pointer may be null warning
     switch (capturedPiece->team)
     {
         case WHITE:
-            *outCapturedPieceTeam = &table->whiteTeam;
+            *outCapturedPieceTeam = &tempTable->whiteTeam;
             break;
         case BLACK:
-            *outCapturedPieceTeam = &table->blackTeam;
+            *outCapturedPieceTeam = &tempTable->blackTeam;
             break;
     }
 
@@ -93,8 +93,8 @@ void m_tempCapture(Table *table, const LegalMoves *moves, int moveIndex, Team **
         if ((*outCapturedPieceTeam)->pieces[i].x == capturedPiece->x &&
             (*outCapturedPieceTeam)->pieces[i].y == capturedPiece->y)
         {
-            //removing the reference owned by table
-            table->table[move->movePartnerY][move->movePartnerX] = NULL;
+            //removing the reference owned by tempTable
+            tempTable->table[move->movePartnerY][move->movePartnerX] = NULL;
             *outCapturedPieceIndex = i;
 
             break;
@@ -109,11 +109,22 @@ void m_reverseTempCapture(Table *table, const LegalMoves *moves, int moveIndex, 
 }
 void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves *outMoves)
 {
-    Table tempTable = *table;
+    Table tempTable;
+    table_deepCopy(&tempTable, table);
     for (int i = 0; i < outMoves->noMoves; ++i)
     {
         const Move *move = &outMoves->moves[i];
         const Piece *subject = tempTable.table[outMoves->startY][outMoves->startY];
+        const Team *subjectTeam;
+        switch (subject->team)
+        {
+            case WHITE:
+                subjectTeam = &table->whiteTeam;
+                break;
+            case BLACK:
+                subjectTeam = &table->blackTeam;
+                break;
+        }
 
         //make temporal move
         int capturedPieceIndex;
@@ -133,18 +144,7 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
                 break;
         }
 
-        //check if the king is in check after move
-        const Team *subjectTeam;
 
-        switch (subject->team)
-        {
-            case WHITE:
-                subjectTeam = &table->whiteTeam;
-                break;
-            case BLACK:
-                subjectTeam = &table->blackTeam;
-                break;
-        }
 
         //mark the move that it must be removed if it results in a check
         int kingX = team_king_const(subjectTeam)->x;

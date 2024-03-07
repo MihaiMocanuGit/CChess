@@ -40,7 +40,7 @@ typedef struct
 } Table;
 
 
-
+void table_deepCopy(Table *newTable, const Table *original);
 void table_init(Table *table);
 void table_capturePiece(Table *table, const LegalMoves *moves, int moveIndex);
 void table_movePiece(Table *table, const LegalMoves *moves, int moveIndex);

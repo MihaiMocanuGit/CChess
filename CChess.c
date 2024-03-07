@@ -41,13 +41,10 @@ int main(int argc, char *argv[])
             SDL_RenderCopy(screen.renderer, screen.textures.background, NULL, NULL);
 
             if (turn % 2 == 0)
-            {
                 applyPieceClickEffects(&clickTypeWhite, &table, &screen, &mouseControllerWhite, true, &turn);
-            }
             else
-            {
                 applyPieceClickEffects(&clickTypeBlack, &table, &screen, &mouseControllerBlack, true, &turn);
-            }
+
 
             screen_drawTeams(&screen, &table);
 
@@ -57,7 +54,7 @@ int main(int argc, char *argv[])
 
         SDL_Event event;
         SDL_WaitEvent(&event);
-
+        SDL_Event debugging;
         switch (event.type)
         {
             case SDL_QUIT:
@@ -72,8 +69,12 @@ int main(int argc, char *argv[])
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                clickTypeWhite = tableMouseController_onClick(&mouseControllerWhite, &event.button);
-                clickTypeBlack = tableMouseController_onClick(&mouseControllerBlack, &event.button);
+
+                SDL_WaitEvent(&debugging);
+                if (turn % 2 == 0)
+                    clickTypeWhite = tableMouseController_onClick(&mouseControllerWhite, &event.button);
+                else
+                    clickTypeBlack = tableMouseController_onClick(&mouseControllerBlack, &event.button);
                 updateScreen = true;
                 break;
         }
