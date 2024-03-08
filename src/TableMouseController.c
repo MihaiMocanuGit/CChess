@@ -12,7 +12,9 @@ TableMouseController tableMouseController_construct(PieceTeam_e fromPerspective,
                                     .oldClickPos = {.x = -1, .y = -1},
                                     .oldClickType = EMPTY_HAND,
                                     .newClickPos = {.x = -1, .y = -1},
-                                    .newClickType = EMPTY_HAND
+                                    .newClickType = EMPTY_HAND,
+                                    .promoteClickPos = {.x = -1, .y = -1},
+                                    .promoteClickType = EMPTY_HAND
                                     };
     return result;
 }
@@ -74,7 +76,38 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
     SDL_Point currentCoords = m_getTableCoords(controller, e);
     if (!m_tableCoordsAreValid(currentCoords))
     {
-        return CLICKED_INVALID; //do nothing
+        //we designate the region consisting of one column of 4 table cells position to the right of the table
+        //as the zone used for selecting the promotion piece type
+        if (controller->newClickType == CLICKED_PROMOTE_PAWN && currentCoords.x == 8)
+        {
+            if (currentCoords.y >= 0 && currentCoords.y < 4)
+            {
+                controller->promoteClickPos = currentCoords;
+                controller->promoteClickType = CLICKED_PROMOTE_PAWN_CHOICE;
+                controller->makeMoveAtIndex = currentCoords.y;
+
+                return CLICKED_PROMOTE_PAWN_CHOICE;
+            }
+
+
+//            switch (currentCoords.y)
+//            {
+//                case 0:
+//                case 1:
+//                case 2:
+//                case 3:
+//                    controller->promoteClickPos = currentCoords;
+//                    controller->promoteClickType = CLICKED_PROMOTE_PAWN_CHOICE;
+//                    return CLICKED_PROMOTE_PAWN_CHOICE;
+//                default:
+//                    controller->promoteClickPos.y = -1;
+//                    controller->promoteClickPos.x = -1;
+//                    return CLICKED_INVALID;
+//
+//            }
+        }
+        else
+                return CLICKED_INVALID; //do nothing
     }
 
     //Click control flow looks like:
@@ -90,7 +123,11 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
     {
         if(m_isPieceOfTeamAt(controller->table, currentCoords, controller->fromPerspective))
         {
-            controller->oldClickType = CLICKED_PICK_UP_PIECE;
+            if (controller->table->table[currentCoords.y][currentCoords.x]->type == PAWN
+                && (currentCoords.y == 0 || currentCoords.y == 7))
+                controller->oldClickType = CLICKED_PROMOTE_PAWN;
+            else
+                controller->oldClickType = CLICKED_PICK_UP_PIECE;
             controller->oldClickPos = currentCoords;
 
             //generate the moves we can do with the picked piece
@@ -98,7 +135,7 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
             // we have the current moves generated, or leave the caller of this function to be responsible for this?
             controller->movesForHeldPiece = legalMoves_constructEmpty();
             m_computeMoves(controller->table, controller->oldClickPos, &controller->movesForHeldPiece);
-            return CLICKED_PICK_UP_PIECE;
+            return controller->oldClickType;
         }
         else
         {
@@ -125,8 +162,6 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
         }
         else
         {   // we either clicked a spot to make a move or we chose an invalid spot.
-
-
 
             for (int i = 0; i < controller->movesForHeldPiece.noMoves; ++i)
             {

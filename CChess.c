@@ -72,9 +72,9 @@ int main(int argc, char *argv[])
                 // Cursor does not work in Clion's debugger right after a mouse event
                 // I could not find another way to solve this, so I am purposely throwing away a few
                 // events in order to get rid of the event that is blocking my cursor
-//                SDL_WaitEvent(&debugging);
-//                SDL_WaitEvent(&debugging);
-//                SDL_WaitEvent(&debugging);
+               SDL_WaitEvent(&debugging);
+               SDL_WaitEvent(&debugging);
+               SDL_WaitEvent(&debugging);
                 if (turn % 2 == 0)
                     clickTypeWhite = tableMouseController_onClick(&mouseControllerWhite, &event.button);
                 else
@@ -105,9 +105,18 @@ void applyPieceClickEffects(const TableClickType_e *clickType, Table *table, Scr
     }
     else if((*clickType) != CLICKED_INVALID && (*clickType) != EMPTY_HAND && (*clickType) != CLICKED_CANCEL)
     {
-        table_makeMove(table, &(*mouseController).movesForHeldPiece, (*mouseController).makeMoveAtIndex);
-        (*mouseController).movesForHeldPiece = legalMoves_constructEmpty();
-        (*turn)++;
+        if ((*clickType) != CLICKED_PROMOTE_PAWN)
+        {
+            table_makeMove(table, &(*mouseController).movesForHeldPiece, (*mouseController).makeMoveAtIndex);
+            (*mouseController).movesForHeldPiece = legalMoves_constructEmpty();
+            (*turn)++;
+        }
+        else
+        {
+            table_makeMove(table, &(*mouseController).movesForHeldPiece, (*mouseController).makeMoveAtIndex);
+            (*mouseController).movesForHeldPiece = legalMoves_constructEmpty();
+            (*turn)++;
+        }
     }
 }
 
