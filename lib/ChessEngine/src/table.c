@@ -201,7 +201,18 @@ void table_capturePiece(Table *table, const LegalMoves *moves, int moveIndex)
 
 }
 
-void table_movePiece(Table *table, const LegalMoves *moves, int moveIndex)
+void m_advancePiece(Table *table, int fromX, int fromY, int toX, int toY)
+{
+    //move the reference to the subjectPiece from the old spot in table to the new one
+    table->table[toY][toX] = table->table[fromY][fromX];
+    table->table[fromY][fromX] = NULL;
+
+    //change the position known by the piece.
+    table->table[toY][toX]->x = toX;
+    table->table[toY][toX]->y = toY;
+}
+
+void table_advancePiece(Table *table, const LegalMoves *moves, int moveIndex)
 {
     int startX = moves->startX;
     int startY = moves->startY;
@@ -209,14 +220,24 @@ void table_movePiece(Table *table, const LegalMoves *moves, int moveIndex)
     int newX = moves->moves[moveIndex].x;
     int newY = moves->moves[moveIndex].y;
 
-    //move the reference to the subjectPiece from the old spot in table to the new one
-    table->table[newY][newX] = table->table[startY][startX];
-    table->table[startY][startX] = NULL;
-
-    //change the position known by the piece.
-    table->table[newY][newX]->x = newX;
-    table->table[newY][newX]->y = newY;
+    m_advancePiece(table, startX, startY, newX, newY);
 }
+void table_castleKing(Table *table, const LegalMoves *moves, int moveIndex)
+{
+    const Move *move = &moves->moves[moveIndex];
+    Piece *rook = table->table[move->movePartnerY][move->movePartnerX];
+    table->table[rook->y][rook->x]->movesMade++;
+
+    int kingNewY = moves->startY;
+    int kingNewX = (rook->x < moves->startX)? 2 : 6;
+
+    int rookNewY = rook->y;
+    int rookNewX = (rook->x < moves->startX)? 3 : 5;
+
+    m_advancePiece(table, moves->startX, moves->startY, kingNewX, kingNewY);
+    m_advancePiece(table, rook->x, rook->y, rookNewX, rookNewY);
+}
+
 
 void table_makeMove(Table *table, const LegalMoves *moves, int moveIndex)
 {
@@ -232,9 +253,10 @@ void table_makeMove(Table *table, const LegalMoves *moves, int moveIndex)
         case CAPTURE:
             table_capturePiece(table, moves, moveIndex);
         case MOVE:
-            table_movePiece(table, moves, moveIndex);
+            table_advancePiece(table, moves, moveIndex);
             break;
         case CASTLE:
+            table_castleKing(table, moves, moveIndex);
             break;
         case PROMOTE:
             break;

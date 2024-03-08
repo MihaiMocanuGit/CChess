@@ -109,6 +109,9 @@ void m_reverseTempCapture(Table *table, const LegalMoves *moves, int moveIndex, 
 }
 void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves *outMoves)
 {
+    //TODO: If performance issue arise, we could check the moves on the original table, without
+    // creating temporal tables and copying all the information from the original.
+    // It should work just fine - possible famous last words
     Table tempTable;
     table_deepCopy(&tempTable, table);
     for (int i = 0; i < outMoves->noMoves; ++i)

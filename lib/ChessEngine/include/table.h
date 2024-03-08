@@ -43,7 +43,9 @@ typedef struct
 void table_deepCopy(Table *newTable, const Table *original);
 void table_init(Table *table);
 void table_capturePiece(Table *table, const LegalMoves *moves, int moveIndex);
-void table_movePiece(Table *table, const LegalMoves *moves, int moveIndex);
+void table_advancePiece(Table *table, const LegalMoves *moves, int moveIndex);
+void table_castleKing(Table *table, const LegalMoves *moves, int moveIndex);
+void table_promotePawn(Table *table, const LegalMoves *moves, int moveIndex);
 
 void table_makeMove(Table *table, const LegalMoves *moves, int moveIndex);
 
