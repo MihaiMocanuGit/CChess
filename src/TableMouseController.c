@@ -12,9 +12,7 @@ TableMouseController tableMouseController_construct(PieceTeam_e fromPerspective,
                                     .oldClickPos = {.x = -1, .y = -1},
                                     .oldClickType = EMPTY_HAND,
                                     .newClickPos = {.x = -1, .y = -1},
-                                    .newClickType = EMPTY_HAND,
-                                    .promoteClickPos = {.x = -1, .y = -1},
-                                    .promoteClickType = EMPTY_HAND
+                                    .newClickType = EMPTY_HAND
                                     };
     return result;
 }
@@ -78,33 +76,17 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
     {
         //we designate the region consisting of one column of 4 table cells position to the right of the table
         //as the zone used for selecting the promotion piece type
-        if (controller->newClickType == CLICKED_PROMOTE_PAWN && currentCoords.x == 8)
+        if (controller->oldClickType == CLICKED_PROMOTE_PAWN)
         {
-            if (currentCoords.y >= 0 && currentCoords.y < 4)
+            if (currentCoords.x == 8 && currentCoords.y >= 0 && currentCoords.y < 4)
             {
-                controller->promoteClickPos = currentCoords;
-                controller->promoteClickType = CLICKED_PROMOTE_PAWN_CHOICE;
+                controller->newClickPos = currentCoords;
+                controller->newClickType = CLICKED_PROMOTE_PAWN_CHOICE;
                 controller->makeMoveAtIndex = currentCoords.y;
 
                 return CLICKED_PROMOTE_PAWN_CHOICE;
             }
 
-
-//            switch (currentCoords.y)
-//            {
-//                case 0:
-//                case 1:
-//                case 2:
-//                case 3:
-//                    controller->promoteClickPos = currentCoords;
-//                    controller->promoteClickType = CLICKED_PROMOTE_PAWN_CHOICE;
-//                    return CLICKED_PROMOTE_PAWN_CHOICE;
-//                default:
-//                    controller->promoteClickPos.y = -1;
-//                    controller->promoteClickPos.x = -1;
-//                    return CLICKED_INVALID;
-//
-//            }
         }
         else
                 return CLICKED_INVALID; //do nothing
@@ -145,12 +127,16 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
     }
 
     //we picked up a piece and we see what move the player wants to make
-    if(controller->oldClickType == CLICKED_PICK_UP_PIECE)
+    if(controller->oldClickType == CLICKED_PICK_UP_PIECE || controller->oldClickType == CLICKED_PROMOTE_PAWN)
     {
         //if we click another piece of the same team, we put the old piece back and pick up the new one
         if(m_isPieceOfTeamAt(controller->table, currentCoords, controller->fromPerspective))
         {
-            controller->oldClickType = CLICKED_PICK_UP_PIECE;
+            if (controller->table->table[currentCoords.y][currentCoords.x]->type == PAWN
+                && (currentCoords.y == 0 || currentCoords.y == 7))
+                controller->oldClickType = CLICKED_PROMOTE_PAWN;
+            else
+                controller->oldClickType = CLICKED_PICK_UP_PIECE;
             controller->oldClickPos = currentCoords;
 
             //generate the moves we can do with the picked piece
@@ -158,7 +144,7 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
             // we have the current moves generated, or leave the caller of this function to be responsible for this?
             controller->movesForHeldPiece = legalMoves_constructEmpty();
             m_computeMoves(controller->table, controller->oldClickPos, &controller->movesForHeldPiece);
-            return CLICKED_PICK_UP_PIECE;
+            return controller->oldClickType;
         }
         else
         {   // we either clicked a spot to make a move or we chose an invalid spot.
@@ -184,6 +170,7 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
                             controller->newClickType = CLICKED_PROMOTE_PAWN;
                             break;
                         case EN_PASSANT:
+                            controller->newClickType = CLICKED_EN_PASSANT;
                             break;
                     }
                     controller->makeMoveAtIndex = i;

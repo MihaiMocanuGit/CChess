@@ -19,6 +19,7 @@ typedef enum
     CLICKED_CASTLE_KING,            //we have the king in hand and want to make a legal castle
     CLICKED_PROMOTE_PAWN,           //we have a pawn in hand from the last row and want to do legal promote
     CLICKED_PROMOTE_PAWN_CHOICE,           //we have a pawn in hand from the last row and want to do legal promote
+    CLICKED_EN_PASSANT,
     CLICKED_CANCEL,                 //we clicked RMB
     CLICKED_INVALID                 //we made a wrong click, do nothing in this case
 } TableClickType_e;
@@ -43,8 +44,6 @@ typedef struct
     //TODO: Separate click type, meaning, add new tags specifically for this
     TableClickType_e newClickType;
 
-    SDL_Point promoteClickPos;
-    TableClickType_e promoteClickType;
 
     // We need to have access to the possible moves the current held piece can do
     // Ideally we should have this data in a single spot and access it through references from different places

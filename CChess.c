@@ -105,18 +105,9 @@ void applyPieceClickEffects(const TableClickType_e *clickType, Table *table, Scr
     }
     else if((*clickType) != CLICKED_INVALID && (*clickType) != EMPTY_HAND && (*clickType) != CLICKED_CANCEL)
     {
-        if ((*clickType) != CLICKED_PROMOTE_PAWN)
-        {
-            table_makeMove(table, &(*mouseController).movesForHeldPiece, (*mouseController).makeMoveAtIndex);
-            (*mouseController).movesForHeldPiece = legalMoves_constructEmpty();
-            (*turn)++;
-        }
-        else
-        {
-            table_makeMove(table, &(*mouseController).movesForHeldPiece, (*mouseController).makeMoveAtIndex);
-            (*mouseController).movesForHeldPiece = legalMoves_constructEmpty();
-            (*turn)++;
-        }
+       table_makeMove(table, &(*mouseController).movesForHeldPiece, (*mouseController).makeMoveAtIndex);
+       (*mouseController).movesForHeldPiece = legalMoves_constructEmpty();
+       (*turn)++;
     }
 }
 

@@ -263,6 +263,7 @@ void table_makeMove(Table *table, const LegalMoves *moves, int moveIndex)
             table_castleKing(table, moves, moveIndex);
             break;
         case PROMOTE:
+            table_promotePawn(table, moves, moveIndex);
             break;
     }
 }
