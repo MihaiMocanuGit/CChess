@@ -141,6 +141,7 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
                 m_tempMove(&tempTable, outMoves, i);
                 break;
             case CASTLE:
+                //when generating all castling moves, we are already making sure that it won't result in a check
                 break;
             case PROMOTE:
                 break;
@@ -427,7 +428,7 @@ void pieceRules_findMovesKing(const Piece *king, const Table *table, LegalMoves 
             //castling is not allowed if the king would go through a spot that is under attack
             for (int x = king->x - 2; x <= king->x; ++x)
             {
-                if (!pieceRules_canKingBeInSpot(king->team, table, king->x, king->y))
+                if (!pieceRules_canKingBeInSpot(king->team, table, x, king->y))
                 {
                     safeSpace = false;
                     break;
@@ -458,7 +459,7 @@ void pieceRules_findMovesKing(const Piece *king, const Table *table, LegalMoves 
             //castling is not allowed if the king would go through a spot that is under attack
             for (int x = king->x; x <= king->x + 2; ++x)
             {
-                if (!pieceRules_canKingBeInSpot(king->team, table, king->x, king->y))
+                if (!pieceRules_canKingBeInSpot(king->team, table, x, king->y))
                 {
                     safeSpace = false;
                     break;

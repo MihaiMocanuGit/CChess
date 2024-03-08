@@ -238,7 +238,11 @@ void table_castleKing(Table *table, const LegalMoves *moves, int moveIndex)
     m_advancePiece(table, rook->x, rook->y, rookNewX, rookNewY);
 }
 
-
+void table_promotePawn(Table *table, const LegalMoves *moves, int moveIndex)
+{
+    Piece *pawn = table->table[moves->startY][moves->startX];
+    pawn->type = moves->moves[moveIndex].movePartnerType;
+}
 void table_makeMove(Table *table, const LegalMoves *moves, int moveIndex)
 {
     int startX = moves->startX;
