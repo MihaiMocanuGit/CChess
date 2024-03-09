@@ -19,11 +19,17 @@ typedef enum
 
 }ActionClickState_e;
 
-typedef struct
+#define PAWN_PROMOTION_CHOICE_ZONE_X_START TABLE_WIDTH
+#define PAWN_PROMOTION_CHOICE_ZONE_X_END TABLE_WIDTH
+#define PAWN_PROMOTION_CHOICE_ZONE_Y_START 0
+#define PAWN_PROMOTION_CHOICE_ZONE_Y_END 3
+typedef enum
 {
-    const SDL_Rect PROMOTE_PAWN_CHOICES_REGION;
-}PromotePawnMouseController;
-
+    PROMOTE_QUEEN = 0,
+    PROMOTE_KNIGHT = 1,
+    PROMOTE_BISHOP = 2,
+    PROMOTE_ROOK = 3
+} PromoteOptionsOrder_e;
 typedef struct
 {
     const PieceTeam_e fromPerspective;
@@ -36,8 +42,6 @@ typedef struct
 
     SDL_Point actionClickCoords;
     ActionClickState_e actionClickState;
-
-    PromotePawnMouseController promotionController;
 
     //bool movesMustBeGenerated;
     LegalMoves movesForHeldPiece;
@@ -55,7 +59,8 @@ typedef enum
     CANCELED,
     SELECTED_PIECE,
     SELECTED_MOVE,
-    STARTED_PROMOTION
+    STARTED_PROMOTION,
+    FINISHED_PROMOTION
 } ClickResult_e;
 ClickResult_e mouseController_onClick(MouseController *controller, const SDL_MouseButtonEvent *e);
 

@@ -16,6 +16,8 @@ void renderMoves(Screen *screen, const LegalMoves *moves);
 void applyPieceClickEffects(ClickResult_e clickResult, Table *table, Screen *screen,
                             MouseController *mouseController, bool showMoves, unsigned *turn);
 
+void renderPromotionChoices(Screen *screen, PieceTeam_e perspective);
+
 int main(int argc, char *argv[])
 {
     Table table;
@@ -95,17 +97,35 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+void clearMouseController(MouseController *mouseController)
+{
+    mouseController->clickedPieceCoords.x = -1;
+    mouseController->clickedPieceCoords.y = -1;
+    mouseController->clickedPieceState = EMPTY_HAND;
+    mouseController->actionClickCoords.x = -1;
+    mouseController->actionClickCoords.y = -1;
+    mouseController->actionClickState = CLICKED_NOTHING;
+    mouseController->makeMoveAtIndex = -1;
+}
 void applyPieceClickEffects(ClickResult_e clickResult, Table *table, Screen *screen,
                             MouseController *mouseController, bool showMoves, unsigned *turn)
 {
-    if (mouseController->clickedPieceState == PICKED_UP_PIECE && mouseController->actionClickState == CLICKED_NOTHING)
+    if (mouseController->clickedPieceState == PICKED_UP_PIECE && clickResult != SELECTED_MOVE)
     {
         if (showMoves)
         {
-            SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(screen, mouseController->clickedPieceCoords.x,
-                                                                                  mouseController->clickedPieceCoords.y);
+            //if ( mouseController->actionClickState == CLICKED_NOTHING)
+            //{
+            SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(screen,
+                                                                          mouseController->clickedPieceCoords.x,
+                                                                          mouseController->clickedPieceCoords.y);
             SDL_RenderCopy((*screen).renderer, (*screen).textures.selectHue, NULL, &heldPieceRect);
             renderMoves(screen, &(*mouseController).movesForHeldPiece);
+            //}
+            /*else*/ if ( mouseController->actionClickState == CLICKED_PROMOTE_PAWN)
+            {
+                renderPromotionChoices(screen, mouseController->fromPerspective);
+            }
         }
     }
     else if (clickResult == SELECTED_MOVE)
@@ -113,6 +133,43 @@ void applyPieceClickEffects(ClickResult_e clickResult, Table *table, Screen *scr
        table_makeMove(table, &mouseController->movesForHeldPiece, mouseController->makeMoveAtIndex);
        mouseController->movesForHeldPiece = legalMoves_constructEmpty();
        (*turn)++;
+
+        clearMouseController(mouseController);
+    }
+}
+
+void renderPromotionChoices(Screen *screen, PieceTeam_e perspective)
+{
+    SDL_Renderer *renderer = screen->renderer;
+    const int ORIGIN_X = PAWN_PROMOTION_CHOICE_ZONE_X_START;
+    const int ORIGIN_Y = PAWN_PROMOTION_CHOICE_ZONE_Y_START;
+    if (perspective == WHITE)
+    {
+        SDL_Rect rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X,  ORIGIN_Y + PROMOTE_QUEEN);
+        SDL_RenderCopy(renderer, screen->textures.whiteQueen, NULL, &rect);
+
+        rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X, ORIGIN_Y + PROMOTE_KNIGHT);
+        SDL_RenderCopy(renderer, screen->textures.whiteKnight, NULL, &rect);
+
+        rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X, ORIGIN_Y + PROMOTE_BISHOP);
+        SDL_RenderCopy(renderer, screen->textures.whiteBishop, NULL, &rect);
+
+        rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X, ORIGIN_Y + PROMOTE_ROOK);
+        SDL_RenderCopy(renderer, screen->textures.whiteRook, NULL, &rect);
+    }
+    else
+    {
+        SDL_Rect rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X, ORIGIN_Y + PROMOTE_QUEEN);
+        SDL_RenderCopy(renderer, screen->textures.blackQueen, NULL, &rect);
+
+        rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X, ORIGIN_Y + PROMOTE_KNIGHT);
+        SDL_RenderCopy(renderer, screen->textures.blackKnight, NULL, &rect);
+
+        rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X, ORIGIN_Y + PROMOTE_BISHOP);
+        SDL_RenderCopy(renderer, screen->textures.blackBishop, NULL, &rect);
+
+        rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X, ORIGIN_Y + PROMOTE_ROOK);
+        SDL_RenderCopy(renderer, screen->textures.blackRook, NULL, &rect);
     }
 }
 

@@ -5,7 +5,6 @@
 
 MouseController mouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table)
 {
-    PromotePawnMouseController promotionController = {};
     MouseController result = {
             .fromPerspective = fromPerspective,
             .screen = screen,
@@ -14,7 +13,6 @@ MouseController mouseController_construct(PieceTeam_e fromPerspective, Screen *s
             .clickedPieceState = EMPTY_HAND,
             .actionClickCoords = {.x = -1, .y = -1},
             .actionClickState = CLICKED_NOTHING,
-            .promotionController = promotionController,
             .makeMoveAtIndex = -1
     };
     return result;
@@ -33,7 +31,8 @@ bool m_tableCoordsAreValid(SDL_Point coords)
 }
 bool m_pawnSelectionCoordsAreValid(SDL_Point coords)
 {
-    return coords.x == 8 && coords.y >= 0 && coords.y < 4;
+    return PAWN_PROMOTION_CHOICE_ZONE_X_START <= coords.x && coords.x <= PAWN_PROMOTION_CHOICE_ZONE_X_END &&
+            PAWN_PROMOTION_CHOICE_ZONE_Y_START <= coords.y && coords.y <= PAWN_PROMOTION_CHOICE_ZONE_Y_END;
 }
 
 Piece *m_getPieceAt(const Table *table, SDL_Point coords)
@@ -82,6 +81,45 @@ bool m_canPossiblePawnBePromoted(const Table *table, SDL_Point coords, PieceTeam
     Piece *pawn = table->table[coords.y][coords.x];
     return pawn->type == PAWN && (pawn->y == 0 || pawn->y == TABLE_HEIGHT - 1) && pawn->team == team;
 }
+
+int m_promoteGetMoveIndexFromMouse(MouseController *controller, SDL_Point currentCoords, const LegalMoves *moves)
+{
+    if (m_pawnSelectionCoordsAreValid(currentCoords))
+    {
+        const PromoteOptionsOrder_e PROMOTE_OPTION = currentCoords.y;
+        for (int i = 0; i < moves->noMoves; ++i)
+        {
+            const Move *move = &moves->moves[i];
+            if (move->type == PROMOTE)
+            {
+                switch (PROMOTE_OPTION)
+                {
+                    case PROMOTE_QUEEN:
+                        if (move->movePartnerType == QUEEN)
+                            return i;
+                        break;
+                    case PROMOTE_KNIGHT:
+                        if (move->movePartnerType == KNIGHT)
+                            return i;
+                        break;
+                    case PROMOTE_BISHOP:
+                        if (move->movePartnerType == BISHOP)
+                            return i;
+                        break;
+                    case PROMOTE_ROOK:
+                        if (move->movePartnerType == ROOK)
+                            return i;
+                        break;
+                }
+            }
+        }
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 ClickResult_e m_leftBtnPressed(MouseController *controller, const SDL_MouseButtonEvent *e)
 {
     SDL_Point currentCoords = m_getTableCoords(controller, e);
@@ -89,9 +127,15 @@ ClickResult_e m_leftBtnPressed(MouseController *controller, const SDL_MouseButto
         return INVALID;
 
     //we previously selected a pawn and we choose to promote it with the following click
-    if (controller->actionClickState ==  CLICKED_PROMOTE_PAWN)
+    if (controller->actionClickState == CLICKED_PROMOTE_PAWN)
     {
         //TODO: Invoke the promotionController
+        int index = m_promoteGetMoveIndexFromMouse(controller, currentCoords, &controller->movesForHeldPiece);
+        if (index == -1)
+            return INVALID;
+
+        controller->makeMoveAtIndex = index;
+        return FINISHED_PROMOTION;
     }
 
     //we are working strictly inside the table, so the pawn promotion logic hasn't been triggered yet
