@@ -5,16 +5,16 @@
 #include "lib/ChessEngine/chessStructure.h"
 
 #include "screen.h"
-#include "TableMouseController.h"
 #include "move.h"
+#include "mouseController.h"
 
 
 void renderMoves(Screen *screen, const LegalMoves *moves);
 
 
 
-void applyPieceClickEffects(const TableClickType_e *clickType, Table *table, Screen *screen,
-                            TableMouseController *mouseController, bool showMoves,  unsigned *turn);
+void applyPieceClickEffects(ClickResult_e clickResult, Table *table, Screen *screen,
+                            MouseController *mouseController, bool showMoves, unsigned *turn);
 
 int main(int argc, char *argv[])
 {
@@ -24,11 +24,17 @@ int main(int argc, char *argv[])
     SDL_Init(SDL_INIT_VIDEO);
     Screen screen = screen_construct("CChess", 800, 600, 0, 0);
 
-    TableMouseController mouseControllerWhite = tableMouseController_construct(WHITE, &screen, &table);
-    TableClickType_e clickTypeWhite;
+//    TableMouseController mouseControllerWhite = mouseController_construct(WHITE, &screen, &table);
+//    TableClickType_e clickTypeWhite;
+//
+//    TableMouseController mouseControllerBlack = mouseController_construct(BLACK, &screen, &table);
+//    TableClickType_e clickTypeBlack;
 
-    TableMouseController mouseControllerBlack = tableMouseController_construct(BLACK, &screen, &table);
-    TableClickType_e clickTypeBlack;
+    MouseController mouseControllerWhite = mouseController_construct(WHITE, &screen, &table);
+    ClickResult_e clickResultWhite = INVALID;
+
+    MouseController mouseControllerBlack = mouseController_construct(BLACK, &screen, &table);
+    ClickResult_e clickResultBlack = INVALID;
 
     bool quit = false;
     bool updateScreen = true;
@@ -41,9 +47,9 @@ int main(int argc, char *argv[])
             SDL_RenderCopy(screen.renderer, screen.textures.background, NULL, NULL);
 
             if (turn % 2 == 0)
-                applyPieceClickEffects(&clickTypeWhite, &table, &screen, &mouseControllerWhite, true, &turn);
+                applyPieceClickEffects(clickResultWhite, &table, &screen, &mouseControllerWhite, true, &turn);
             else
-                applyPieceClickEffects(&clickTypeBlack, &table, &screen, &mouseControllerBlack, true, &turn);
+                applyPieceClickEffects(clickResultBlack, &table, &screen, &mouseControllerBlack, true, &turn);
 
 
             screen_drawTeams(&screen, &table);
@@ -76,9 +82,9 @@ int main(int argc, char *argv[])
                SDL_WaitEvent(&debugging);
                SDL_WaitEvent(&debugging);
                 if (turn % 2 == 0)
-                    clickTypeWhite = tableMouseController_onClick(&mouseControllerWhite, &event.button);
+                    clickResultWhite = mouseController_onClick(&mouseControllerWhite, &event.button);
                 else
-                    clickTypeBlack = tableMouseController_onClick(&mouseControllerBlack, &event.button);
+                    clickResultBlack = mouseController_onClick(&mouseControllerBlack, &event.button);
                 updateScreen = true;
                 break;
         }
@@ -89,24 +95,23 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void applyPieceClickEffects(const TableClickType_e *clickType, Table *table, Screen *screen,
-                            TableMouseController *mouseController, bool showMoves, unsigned *turn)
+void applyPieceClickEffects(ClickResult_e clickResult, Table *table, Screen *screen,
+                            MouseController *mouseController, bool showMoves, unsigned *turn)
 {
-    if ((*clickType) == PICKED_UP_PIECE)
+    if (mouseController->clickedPieceState == PICKED_UP_PIECE && mouseController->actionClickState == CLICKED_NOTHING)
     {
-        SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(screen, (*mouseController).oldClickPos.x,
-                                                                      (*mouseController).oldClickPos.y);
-
         if (showMoves)
         {
+            SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(screen, mouseController->clickedPieceCoords.x,
+                                                                                  mouseController->clickedPieceCoords.y);
             SDL_RenderCopy((*screen).renderer, (*screen).textures.selectHue, NULL, &heldPieceRect);
             renderMoves(screen, &(*mouseController).movesForHeldPiece);
         }
     }
-    else if((*clickType) != CLICKED_INVALID && (*clickType) != EMPTY_HAND && (*clickType) != CLICKED_CANCEL)
+    else if (clickResult == SELECTED_MOVE)
     {
-       table_makeMove(table, &(*mouseController).movesForHeldPiece, (*mouseController).makeMoveAtIndex);
-       (*mouseController).movesForHeldPiece = legalMoves_constructEmpty();
+       table_makeMove(table, &mouseController->movesForHeldPiece, mouseController->makeMoveAtIndex);
+       mouseController->movesForHeldPiece = legalMoves_constructEmpty();
        (*turn)++;
     }
 }

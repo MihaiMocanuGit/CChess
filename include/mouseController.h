@@ -14,10 +14,7 @@ typedef enum
 {
     CLICKED_NOTHING,
     CLICKED_CANCEL,
-    CLICKED_CAPTURE_PIECE,
-    CLICKED_ADVANCE_PIECE,
-    CLICKED_CASTLE_KING,
-    CLICKED_EN_PASSANT,
+    CLICKED_MAKE_MOVE,
     CLICKED_PROMOTE_PAWN
 
 }ActionClickState_e;
@@ -48,7 +45,7 @@ typedef struct
 
 }MouseController;
 
-MouseController tableMouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table); //, const SDL_Rect *region);
+MouseController mouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table); //, const SDL_Rect *region);
 
 
 
@@ -60,6 +57,6 @@ typedef enum
     SELECTED_MOVE,
     STARTED_PROMOTION
 } ClickResult_e;
-ClickResult_e tableMouseController_onClick(MouseController *controller, const SDL_MouseButtonEvent *e);
+ClickResult_e mouseController_onClick(MouseController *controller, const SDL_MouseButtonEvent *e);
 
 #endif //CCHESS_MOUSECONTROLLER_H

@@ -1,9 +1,9 @@
-#include "mouseController.h"
-#include "pieceRules.h"
+#include "../include/mouseController.h"
+#include "../lib/ChessEngine/include/pieceRules.h"
 
 
 
-MouseController tableMouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table)
+MouseController mouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table)
 {
     PromotePawnMouseController promotionController = {};
     MouseController result = {
@@ -33,7 +33,7 @@ bool m_tableCoordsAreValid(SDL_Point coords)
 }
 bool m_pawnSelectionCoordsAreValid(SDL_Point coords)
 {
-    return coords.x == 8 && (coords.y >= 0 || coords.y < 4)
+    return coords.x == 8 && coords.y >= 0 && coords.y < 4;
 }
 
 Piece *m_getPieceAt(const Table *table, SDL_Point coords)
@@ -133,6 +133,8 @@ ClickResult_e m_leftBtnPressed(MouseController *controller, const SDL_MouseButto
             {
                 controller->actionClickState =  CLICKED_PROMOTE_PAWN;
                 controller->actionClickCoords = currentCoords;
+
+                return STARTED_PROMOTION;
             }
 
             //we choose another piece instead of making a move with the previous piece
@@ -154,14 +156,16 @@ ClickResult_e m_leftBtnPressed(MouseController *controller, const SDL_MouseButto
             }
             else //we are making a move;
             {
-                bool moveExits = false;
+                bool moveExists = false;
 
                 for (int i = 0; i < controller->movesForHeldPiece.noMoves; ++i)
                 {
                     Move *move = &controller->movesForHeldPiece.moves[i];
                     if (currentCoords.x == move->x && currentCoords.y == move->y)
                     {
-                        moveExits = true;
+                        moveExists = true;
+                        controller->actionClickState = CLICKED_MAKE_MOVE;
+                        controller->actionClickCoords = currentCoords;
                         controller->makeMoveAtIndex = i;
                         return SELECTED_MOVE;
                     }
@@ -180,7 +184,7 @@ ClickResult_e m_rightBtnPressed(MouseController *controller, const SDL_MouseButt
     controller->movesForHeldPiece = legalMoves_constructEmpty();
     return CANCELED;
 }
-ClickResult_e tableMouseController_onClick(MouseController *controller, const SDL_MouseButtonEvent *e)
+ClickResult_e mouseController_onClick(MouseController *controller, const SDL_MouseButtonEvent *e)
 {
     switch (e->button)
     {
