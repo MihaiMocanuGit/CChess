@@ -201,7 +201,7 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, LegalMoves 
     const int dir = (pawn->team == WHITE)? -1 : 1;
 
     //promotion
-    if (startY == 0 || startY == TABLE_HEIGHT)
+    if (startY == 0 || startY == TABLE_HEIGHT - 1)
     {
         m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, BISHOP));
         m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, ROOK));
