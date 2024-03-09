@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 void applyPieceClickEffects(const TableClickType_e *clickType, Table *table, Screen *screen,
                             TableMouseController *mouseController, bool showMoves, unsigned *turn)
 {
-    if ((*clickType) == CLICKED_PICK_UP_PIECE)
+    if ((*clickType) == PICKED_UP_PIECE)
     {
         SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(screen, (*mouseController).oldClickPos.x,
                                                                       (*mouseController).oldClickPos.y);

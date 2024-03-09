@@ -34,7 +34,9 @@ endif ()
 
 
 
-add_executable(CChess CChess.c)
+add_executable(CChess CChess.c
+        src/mouseController.c
+        include/mouseController.h)
 
 add_subdirectory(src)
 add_subdirectory(lib)

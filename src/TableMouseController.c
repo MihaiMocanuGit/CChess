@@ -109,7 +109,7 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
                 && (currentCoords.y == 0 || currentCoords.y == 7))
                 controller->oldClickType = CLICKED_PROMOTE_PAWN;
             else
-                controller->oldClickType = CLICKED_PICK_UP_PIECE;
+                controller->oldClickType = PICKED_UP_PIECE;
             controller->oldClickPos = currentCoords;
 
             //generate the moves we can do with the picked piece
@@ -127,7 +127,7 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
     }
 
     //we picked up a piece and we see what move the player wants to make
-    if(controller->oldClickType == CLICKED_PICK_UP_PIECE || controller->oldClickType == CLICKED_PROMOTE_PAWN)
+    if(controller->oldClickType == PICKED_UP_PIECE || controller->oldClickType == CLICKED_PROMOTE_PAWN)
     {
         //if we click another piece of the same team, we put the old piece back and pick up the new one
         if(m_isPieceOfTeamAt(controller->table, currentCoords, controller->fromPerspective))
@@ -136,7 +136,7 @@ TableClickType_e m_leftBtnPressed(TableMouseController *controller, const SDL_Mo
                 && (currentCoords.y == 0 || currentCoords.y == 7))
                 controller->oldClickType = CLICKED_PROMOTE_PAWN;
             else
-                controller->oldClickType = CLICKED_PICK_UP_PIECE;
+                controller->oldClickType = PICKED_UP_PIECE;
             controller->oldClickPos = currentCoords;
 
             //generate the moves we can do with the picked piece

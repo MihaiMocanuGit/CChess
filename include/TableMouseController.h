@@ -12,7 +12,7 @@ typedef enum
 {
     EMPTY_HAND,                     //we have nothing in hand, happens after a move
     //UNINIT_STATE,                   //represents an uninitialised state, it's not exactly empty yet
-    CLICKED_PICK_UP_PIECE,          //we had an empty hand, and then we picked up a new piece
+    PICKED_UP_PIECE,          //we had an empty hand, and then we picked up a new piece
     //CLICKED_SAME_TEAM_PIECE,        //already had a piece in hand and we get another one
     CLICKED_CAPTURE_PIECE,          //we have a piece in hand and want to make a legal capture
     CLICKED_ADVANCE_PIECE,          //we have a piece in hand and want to make a legal move
