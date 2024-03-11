@@ -207,16 +207,16 @@ void m_addPawnMoveWithPromoteInjection(LegalMoves *outMoves, Move move)
 
 
         move.type = newType;
-        move.movePartnerType = BISHOP;
+        move.promoteTo = BISHOP;
         m_pieceMoves_addMove(outMoves, move);
 
-        move.movePartnerType = ROOK;
+        move.promoteTo = ROOK;
         m_pieceMoves_addMove(outMoves, move);
 
-        move.movePartnerType = KNIGHT;
+        move.promoteTo = KNIGHT;
         m_pieceMoves_addMove(outMoves, move);
 
-        move.movePartnerType = QUEEN;
+        move.promoteTo = QUEEN;
         m_pieceMoves_addMove(outMoves, move);
     }
     else
