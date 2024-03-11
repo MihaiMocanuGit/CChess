@@ -2,15 +2,17 @@
 #define CCHESS_MOVE_H
 
 #include <stddef.h>
+#include <stdbool.h>
 #include "piece.h"
 
 typedef enum
 {
-    MOVE,
+    ADVANCE,
     CAPTURE,
     CASTLE,
-    PROMOTE,
-    EN_PASSANT
+    EN_PASSANT,
+    ADVANCE_TO_PROMOTE,
+    CAPTURE_TO_PROMOTE,
 
 }MoveType_e;
 typedef struct
@@ -46,7 +48,7 @@ typedef struct
 
 void pieceMove_initMove(Move *move, int x, int y);
 
-Move pieceMove_constructMove(int x, int y);
+Move pieceMove_constructAdvance(int x, int y);
 
 void pieceMove_initCapture(Move *move, int x, int y, PieceType_e movePartnerType);
 

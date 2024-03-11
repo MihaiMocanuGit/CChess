@@ -90,7 +90,7 @@ int m_promoteGetMoveIndexFromMouse(MouseController *controller, SDL_Point curren
         for (int i = 0; i < moves->noMoves; ++i)
         {
             const Move *move = &moves->moves[i];
-            if (move->type == PROMOTE)
+            if (move->type == CAPTURE_TO_PROMOTE || move->type == ADVANCE_TO_PROMOTE)
             {
                 switch (PROMOTE_OPTION)
                 {

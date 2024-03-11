@@ -4,14 +4,14 @@ void pieceMove_initMove(Move *move, int x, int y)
 {
     move->x = x;
     move->y = y;
-    move->type = MOVE;
+    move->type = ADVANCE;
     move->movePartnerX = -1;
     move->movePartnerY = -1;
 }
 
-Move pieceMove_constructMove(int x, int y)
+Move pieceMove_constructAdvance(int x, int y)
 {
-    Move move = {.x = x, .y = y, .type = MOVE};
+    Move move = {.x = x, .y = y, .type = ADVANCE};
     return move;
 }
 
@@ -49,19 +49,39 @@ Move pieceMove_constructEnPassant(int pawnToX, int pawnToY, int enemyPawnFromX, 
     return move;
 }
 
-void pieceMove_initPromote(Move *move, int x, int y, PieceType_e promoteTo)
+
+void pieceMove_initCaptureToPromote(Move *move, int x, int y, PieceType_e promoteTo)
 {
     move->x = x;
     move->y = y;
-    move->type = PROMOTE;
+    move->type = CAPTURE_TO_PROMOTE;
     move->movePartnerX = x;
     move->movePartnerY = y;
     move->movePartnerType = promoteTo;
 }
 
-Move pieceMove_constructPromote(int x, int y, PieceType_e promoteTo)
+
+Move pieceMove_constructCaptureToPromote(int x, int y, PieceType_e promoteTo)
 {
-    Move move = {.x = x, .y = y, .type = PROMOTE,
+    Move move = {.x = x, .y = y, .type = CAPTURE_TO_PROMOTE ,
+            .movePartnerX = x, .movePartnerY = y, .movePartnerType = promoteTo};
+    return move;
+}
+
+void pieceMove_initAdvanceToPromote(Move *move, int x, int y, PieceType_e promoteTo)
+{
+    move->x = x;
+    move->y = y;
+    move->type = ADVANCE_TO_PROMOTE;
+    move->movePartnerX = x;
+    move->movePartnerY = y;
+    move->movePartnerType = promoteTo;
+}
+
+
+Move pieceMove_constructAdvanceToPromote(int x, int y, PieceType_e promoteTo)
+{
+    Move move = {.x = x, .y = y, .type = ADVANCE_TO_PROMOTE ,
             .movePartnerX = x, .movePartnerY = y, .movePartnerType = promoteTo};
     return move;
 }
@@ -70,7 +90,7 @@ void pieceMove_initCastle(Move *move, int kingToX, int kingToY, int rookFromX, i
 {
     move->x = kingToX;
     move->y = kingToY;
-    move->type = PROMOTE;
+    move->type = CASTLE;
     move->movePartnerX = rookFromX;
     move->movePartnerY = rookFromY;
     move->movePartnerType = ROOK;
@@ -79,7 +99,7 @@ void pieceMove_initCastle(Move *move, int kingToX, int kingToY, int rookFromX, i
 Move pieceMove_constructCastle(int kingToX, int kingToY, int rookFromX, int rookFromY)
 {
     Move move = {.x = kingToX, .y = kingToY, .type = CASTLE,
-            .movePartnerX = rookFromX, .movePartnerY = rookFromY, .movePartnerType = CASTLE};
+            .movePartnerX = rookFromX, .movePartnerY = rookFromY, .movePartnerType = ROOK};
     return move;
 }
 

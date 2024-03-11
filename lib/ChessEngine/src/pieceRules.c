@@ -27,7 +27,7 @@ void m_pieceRules_moveGenerator(const Table *table, PieceTeam_e subjectTeam, int
 
         if (table->table[newY][newX] == NULL)
         {
-            m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY));
+            m_pieceMoves_addMove(outMoves, pieceMove_constructAdvance(newX, newY));
         }
         else
         {
@@ -135,15 +135,15 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
         switch (move->type)
         {
             case EN_PASSANT:
+            case CAPTURE_TO_PROMOTE:
             case CAPTURE:
                 m_tempCapture(&tempTable, outMoves, i, &capturedPieceTeam, &capturedPieceIndex);
-            case MOVE:
+            case ADVANCE_TO_PROMOTE:
+            case ADVANCE:
                 m_tempMove(&tempTable, outMoves, i);
                 break;
             case CASTLE:
                 //when generating all castling moves, we are already making sure that it won't result in a check
-                break;
-            case PROMOTE:
                 break;
         }
 
@@ -158,16 +158,16 @@ void m_removeBadMovesInCheck(const Piece *piece, const Table *table, LegalMoves 
         switch (move->type)
         {
             case EN_PASSANT:
+            case CAPTURE_TO_PROMOTE:
             case CAPTURE:
                 m_reverseTempMove(&tempTable, outMoves, i);
                 m_reverseTempCapture(&tempTable, outMoves, i, capturedPieceTeam, capturedPieceIndex);
                 break;
-            case MOVE:
+            case ADVANCE_TO_PROMOTE:
+            case ADVANCE:
                 m_reverseTempMove(&tempTable, outMoves, i);
                 break;
             case CASTLE:
-                break;
-            case PROMOTE:
                 break;
         }
 
@@ -190,6 +190,40 @@ bool m_canApplyEnPassant(const Piece* pieceToBeCaptured, const Piece *subjectPaw
     }
     return false;
 }
+
+void m_addPawnMoveWithPromoteInjection(LegalMoves *outMoves, Move move)
+{
+    const int startX = outMoves->startX;
+    const int startY = outMoves->startY;
+
+    const int moveX = move.x;
+    const int moveY = move.y;
+
+    if (moveY == 0 || moveY == TABLE_HEIGHT - 1)
+    {
+        MoveType_e newType = ADVANCE_TO_PROMOTE;
+        if(move.type == CAPTURE)
+            newType = CAPTURE_TO_PROMOTE;
+
+
+        move.type = newType;
+        move.movePartnerType = BISHOP;
+        m_pieceMoves_addMove(outMoves, move);
+
+        move.movePartnerType = ROOK;
+        m_pieceMoves_addMove(outMoves, move);
+
+        move.movePartnerType = KNIGHT;
+        m_pieceMoves_addMove(outMoves, move);
+
+        move.movePartnerType = QUEEN;
+        m_pieceMoves_addMove(outMoves, move);
+    }
+    else
+    {
+        m_pieceMoves_addMove(outMoves, move);
+    }
+}
 void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, LegalMoves *outMoves)
 {
 
@@ -200,29 +234,29 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, LegalMoves 
     //we will make the assumption that white is always at the bottom of the table.
     const int dir = (pawn->team == WHITE)? -1 : 1;
 
-    //promotion
-    if (startY == 0 || startY == TABLE_HEIGHT - 1)
+    if (true || startY == 0 || startY == TABLE_HEIGHT - 1)
     {
-        m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, BISHOP));
+        //this can never happen as a pawn will always be promoted when reaching the end tile
+       /* m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, BISHOP));
         m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, ROOK));
         m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, KNIGHT));
         m_pieceMoves_addMove(outMoves, pieceMove_constructPromote(startX, startY, QUEEN));
         return; //we cannot do anything more. Excluding this case now means that we do not have to validate
-                //the y coord in the other cases!!!!!!!
+                //the y coord in the other cases!!!!!!!*/
     }
 
     //one tile move
     int newX = startX;
     int newY = startY + dir;
     if (table->table[newY][newX] == NULL)
-        m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY));
+        m_addPawnMoveWithPromoteInjection(outMoves, pieceMove_constructAdvance(newX, newY));
 
     // only for the first move the pawn can move 2 tiles
     newX = startX;
     newY = startY + dir * 2;
     if (pawn->movesMade == 0 && table->table[startY + dir][newX] == NULL && table->table[newY][newX] == NULL)
         //by checking for pawn->movesMade == 0, we are sure that newY is in bounds
-        m_pieceMoves_addMove(outMoves, pieceMove_constructMove(newX, newY));
+        m_pieceMoves_addMove(outMoves, pieceMove_constructAdvance(newX, newY));
 
 
 
@@ -231,7 +265,8 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, LegalMoves 
         //generic capture
         Piece *leftPiece = table->table[startY + dir][startX - 1];
         if (leftPiece != NULL && leftPiece->team != pawn->team)
-            m_pieceMoves_addMove(outMoves, pieceMove_constructCapture(startX - 1, startY + dir, leftPiece->type));
+            m_addPawnMoveWithPromoteInjection(outMoves,
+                                              pieceMove_constructCapture(startX - 1, startY + dir, leftPiece->type));
 
         //en'passant when the piece to be captured is to the left
         leftPiece = table->table[startY][startX - 1];
@@ -246,7 +281,8 @@ void pieceRules_findMovesPawn(const Piece *pawn, const Table *table, LegalMoves 
         //generic capture
         Piece *rightPiece = table->table[startY + dir][startX + 1];
         if (rightPiece != NULL && rightPiece->team != pawn->team)
-            m_pieceMoves_addMove(outMoves, pieceMove_constructCapture(startX + 1, startY + dir, rightPiece->type));
+            m_addPawnMoveWithPromoteInjection(outMoves,
+                                              pieceMove_constructCapture(startX + 1, startY + dir, rightPiece->type));
 
         //en'passant when the piece to be captured is to the right
         rightPiece = table->table[startY][startX + 1];
@@ -330,7 +366,7 @@ void pieceRules_findMovesKnight(const Piece *knight, const Table *table, LegalMo
         if (pieceRules_areCoordsValid(x, y))
         {
             if (table->table[y][x] == NULL)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(x, y));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructAdvance(x, y));
             else if (table->table[y][x]->team != knight->team)
                 m_pieceMoves_addMove(outMoves, pieceMove_constructCapture(x, y, table->table[y][x]->type));
         }
@@ -400,7 +436,7 @@ void pieceRules_findMovesKing(const Piece *king, const Table *table, LegalMoves 
                 pieceRules_canKingBeInSpot(king->team, table, x, y))
         {
             if (table->table[y][x] == NULL)
-                m_pieceMoves_addMove(outMoves, pieceMove_constructMove(x, y));
+                m_pieceMoves_addMove(outMoves, pieceMove_constructAdvance(x, y));
             else
                 m_pieceMoves_addMove(outMoves, pieceMove_constructCapture(x, y, table->table[y][x]->type));
         }

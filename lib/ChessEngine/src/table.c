@@ -254,17 +254,21 @@ void table_makeMove(Table *table, const LegalMoves *moves, int moveIndex)
     switch (move->type)
     {
         case EN_PASSANT:
+        case CAPTURE_TO_PROMOTE:
+            table_promotePawn(table, moves, moveIndex);
         case CAPTURE:
             table_capturePiece(table, moves, moveIndex);
-        case MOVE:
+        case ADVANCE:
+            table_advancePiece(table, moves, moveIndex);
+            break;
+        case ADVANCE_TO_PROMOTE:
+            table_promotePawn(table, moves, moveIndex);
             table_advancePiece(table, moves, moveIndex);
             break;
         case CASTLE:
             table_castleKing(table, moves, moveIndex);
             break;
-        case PROMOTE:
-            table_promotePawn(table, moves, moveIndex);
-            break;
+
     }
 }
 

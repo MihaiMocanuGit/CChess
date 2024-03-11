@@ -185,17 +185,18 @@ void renderMoves(Screen *screen, const LegalMoves *moves)
         switch ((*moves).moves[i].type)
         {
 
-            case MOVE:
+            case ADVANCE_TO_PROMOTE:
+                SDL_RenderCopy(screen->renderer, screen->textures.promoteCircle, NULL, &rect);
+            case ADVANCE:
                 SDL_RenderCopy(screen->renderer, screen->textures.moveCircle, NULL, &rect);
                 break;
+            case CAPTURE_TO_PROMOTE:
+                SDL_RenderCopy(screen->renderer, screen->textures.promoteCircle, NULL, &rect);
             case CAPTURE:
                 SDL_RenderCopy(screen->renderer, screen->textures.captureCircle, NULL, &rect);
                 break;
             case CASTLE:
                 SDL_RenderCopy(screen->renderer, screen->textures.castleCircle, NULL, &rect);
-                break;
-            case PROMOTE:
-                SDL_RenderCopy(screen->renderer, screen->textures.promoteCircle, NULL, &rect);
                 break;
             case EN_PASSANT:
                 SDL_RenderCopy(screen->renderer, screen->textures.captureCircle, NULL, &rect);
