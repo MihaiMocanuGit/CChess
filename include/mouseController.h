@@ -15,7 +15,7 @@ typedef enum
     CLICKED_NOTHING,
     CLICKED_CANCEL,
     CLICKED_MAKE_MOVE,
-    CLICKED_PROMOTE_PAWN
+    CLICKED_MAKE_MOVE_AND_PROMOTE_PAWN
 
 }ActionClickState_e;
 
@@ -30,28 +30,6 @@ typedef enum
     PROMOTE_BISHOP = 2,
     PROMOTE_ROOK = 3
 } PromoteOptionsOrder_e;
-typedef struct
-{
-    const PieceTeam_e fromPerspective;
-    Screen * const screen;
-    Table * const table;
-
-
-    SDL_Point clickedPieceCoords;
-    ClickedPieceState_e clickedPieceState;
-
-    SDL_Point actionClickCoords;
-    ActionClickState_e actionClickState;
-
-    //bool movesMustBeGenerated;
-    LegalMoves movesForHeldPiece;
-    int makeMoveAtIndex;
-
-}MouseController;
-
-MouseController mouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table); //, const SDL_Rect *region);
-
-
 
 typedef enum
 {
@@ -62,6 +40,35 @@ typedef enum
     STARTED_PROMOTION,
     FINISHED_PROMOTION
 } ClickResult_e;
+
+typedef struct
+{
+    const PieceTeam_e fromPerspective;
+    Screen * const screen;
+    Table * const table;
+
+
+    SDL_Point heldPieceCoords;
+    ClickedPieceState_e heldPieceState;
+
+    SDL_Point actionClickCoords;
+    ActionClickState_e actionClickState;
+    bool showPromoteWindow;
+    LegalMoves promotionMoveVariants;
+
+    bool movesMustBeGenerated; //not used yet, but I'm setting the status from now to be easier to implement later
+    LegalMoves movesForHeldPiece;
+    int makeMoveAtIndex;
+
+    ClickResult_e previousClickResult;
+
+}MouseController;
+
+MouseController mouseController_construct(PieceTeam_e fromPerspective, Screen *screen, Table *table); //, const SDL_Rect *region);
+
+
+
+
 ClickResult_e mouseController_onClick(MouseController *controller, const SDL_MouseButtonEvent *e);
 
 #endif //CCHESS_MOUSECONTROLLER_H

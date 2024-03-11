@@ -241,12 +241,16 @@ void table_castleKing(Table *table, const LegalMoves *moves, int moveIndex)
 void table_promotePawn(Table *table, const LegalMoves *moves, int moveIndex)
 {
     Piece *pawn = table->table[moves->startY][moves->startX];
-    pawn->type = moves->moves[moveIndex].movePartnerType;
+    pawn->type = moves->moves[moveIndex].promoteTo;
 }
 void table_makeMove(Table *table, const LegalMoves *moves, int moveIndex)
 {
     int startX = moves->startX;
     int startY = moves->startY;
+
+    //TODO This happens only when I'm debugging and changing windows, should delete this if when finishing debugging
+    if (startX < 0 || startX >= TABLE_WIDTH || startY < 0 || startY >= TABLE_HEIGHT)
+        return;
 
     table->table[startY][startX]->movesMade++;
     const Move *move = &moves->moves[moveIndex];

@@ -99,9 +99,9 @@ int main(int argc, char *argv[])
 
 void clearMouseController(MouseController *mouseController)
 {
-    mouseController->clickedPieceCoords.x = -1;
-    mouseController->clickedPieceCoords.y = -1;
-    mouseController->clickedPieceState = EMPTY_HAND;
+    mouseController->heldPieceCoords.x = -1;
+    mouseController->heldPieceCoords.y = -1;
+    mouseController->heldPieceState = EMPTY_HAND;
     mouseController->actionClickCoords.x = -1;
     mouseController->actionClickCoords.y = -1;
     mouseController->actionClickState = CLICKED_NOTHING;
@@ -110,21 +110,28 @@ void clearMouseController(MouseController *mouseController)
 void applyPieceClickEffects(ClickResult_e clickResult, Table *table, Screen *screen,
                             MouseController *mouseController, bool showMoves, unsigned *turn)
 {
-    if (mouseController->clickedPieceState == PICKED_UP_PIECE && clickResult != SELECTED_MOVE)
+    if (mouseController->heldPieceState == PICKED_UP_PIECE && clickResult != SELECTED_MOVE)
     {
         if (showMoves)
         {
-            //if ( mouseController->actionClickState == CLICKED_NOTHING)
-            //{
-            SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(screen,
-                                                                          mouseController->clickedPieceCoords.x,
-                                                                          mouseController->clickedPieceCoords.y);
-            SDL_RenderCopy((*screen).renderer, (*screen).textures.selectHue, NULL, &heldPieceRect);
-            renderMoves(screen, &(*mouseController).movesForHeldPiece);
-            //}
-            /*else*/ if ( mouseController->actionClickState == CLICKED_PROMOTE_PAWN)
+
+            if (clickResult != FINISHED_PROMOTION)
             {
-                renderPromotionChoices(screen, mouseController->fromPerspective);
+                SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(screen,
+                                                                              mouseController->heldPieceCoords.x,
+                                                                              mouseController->heldPieceCoords.y);
+                SDL_RenderCopy((*screen).renderer, (*screen).textures.selectHue, NULL, &heldPieceRect);
+                renderMoves(screen, &(*mouseController).movesForHeldPiece);
+
+                if (mouseController->actionClickState == CLICKED_MAKE_MOVE_AND_PROMOTE_PAWN)
+                {
+                    renderPromotionChoices(screen, mouseController->fromPerspective);
+                }
+            }
+            else
+            {
+                table_makeMove(table, &mouseController->promotionMoveVariants, mouseController->makeMoveAtIndex);
+                (*turn)++;
             }
         }
     }
@@ -134,7 +141,6 @@ void applyPieceClickEffects(ClickResult_e clickResult, Table *table, Screen *scr
        mouseController->movesForHeldPiece = legalMoves_constructEmpty();
        (*turn)++;
 
-        clearMouseController(mouseController);
     }
 }
 
