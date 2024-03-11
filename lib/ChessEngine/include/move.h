@@ -33,6 +33,7 @@ typedef struct
     int movePartnerX;
     int movePartnerY;
     PieceType_e movePartnerType;
+    PieceType_e promoteTo;
 
 } Move;
 typedef struct
@@ -58,9 +59,10 @@ void pieceMove_initEnPassant(Move *move, int pawnToX, int pawnToY, int enemyPawn
 
 Move pieceMove_constructEnPassant(int pawnToX, int pawnToY, int enemyPawnFromX, int enemyPawnFromY);
 
-void pieceMove_initPromote(Move *move, int x, int y, PieceType_e promoteTo);
-
-Move pieceMove_constructPromote(int x, int y, PieceType_e promoteTo);
+void pieceMove_initCaptureToPromote(Move *move, int x, int y, PieceType_e movePartner, PieceType_e promoteTo);
+Move pieceMove_constructCaptureToPromote(int x, int y, PieceType_e movePartner, PieceType_e promoteTo);
+void pieceMove_initAdvanceToPromote(Move *move, int x, int y, PieceType_e movePartner, PieceType_e promoteTo);
+Move pieceMove_constructAdvanceToPromote(int x, int y, PieceType_e movePartner, PieceType_e promoteTo);
 
 void pieceMove_initCastle(Move *move, int kingToX, int kingToY, int rookFromX, int rookFromY);
 

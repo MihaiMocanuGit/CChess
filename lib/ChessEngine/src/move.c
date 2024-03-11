@@ -50,39 +50,42 @@ Move pieceMove_constructEnPassant(int pawnToX, int pawnToY, int enemyPawnFromX, 
 }
 
 
-void pieceMove_initCaptureToPromote(Move *move, int x, int y, PieceType_e promoteTo)
+void pieceMove_initCaptureToPromote(Move *move, int x, int y, PieceType_e movePartner, PieceType_e promoteTo)
 {
     move->x = x;
     move->y = y;
     move->type = CAPTURE_TO_PROMOTE;
     move->movePartnerX = x;
     move->movePartnerY = y;
-    move->movePartnerType = promoteTo;
+    move->movePartnerType = movePartner;
+    move->promoteTo = promoteTo;
 }
 
 
-Move pieceMove_constructCaptureToPromote(int x, int y, PieceType_e promoteTo)
+Move pieceMove_constructCaptureToPromote(int x, int y, PieceType_e movePartner, PieceType_e promoteTo)
 {
     Move move = {.x = x, .y = y, .type = CAPTURE_TO_PROMOTE ,
-            .movePartnerX = x, .movePartnerY = y, .movePartnerType = promoteTo};
+            .movePartnerX = x, .movePartnerY = y, .movePartnerType = movePartner, .promoteTo = promoteTo};
     return move;
 }
 
-void pieceMove_initAdvanceToPromote(Move *move, int x, int y, PieceType_e promoteTo)
+void pieceMove_initAdvanceToPromote(Move *move, int x, int y, PieceType_e movePartner, PieceType_e promoteTo)
 {
     move->x = x;
     move->y = y;
     move->type = ADVANCE_TO_PROMOTE;
     move->movePartnerX = x;
     move->movePartnerY = y;
-    move->movePartnerType = promoteTo;
+    move->movePartnerType = movePartner;
+    move->promoteTo = promoteTo;
 }
 
 
-Move pieceMove_constructAdvanceToPromote(int x, int y, PieceType_e promoteTo)
+
+Move pieceMove_constructAdvanceToPromote(int x, int y, PieceType_e movePartner, PieceType_e promoteTo)
 {
     Move move = {.x = x, .y = y, .type = ADVANCE_TO_PROMOTE ,
-            .movePartnerX = x, .movePartnerY = y, .movePartnerType = promoteTo};
+            .movePartnerX = x, .movePartnerY = y, .movePartnerType = movePartner, .promoteTo = promoteTo};
     return move;
 }
 
