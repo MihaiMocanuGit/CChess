@@ -79,155 +79,8 @@ void m_computeMoves(const Table *table, SDL_Point heldPieceCoords, LegalMoves *o
     }
 }
 
-bool m_canPossiblePawnBePromoted(const Table *table, SDL_Point coords, PieceTeam_e team)
-{
-    Piece *pawn = table->table[coords.y][coords.x];
-    return pawn->type == PAWN && (pawn->y == 0 || pawn->y == TABLE_HEIGHT - 1) && pawn->team == team;
-}
 
-int m_promoteGetMoveIndexFromMouse(MouseController *controller, SDL_Point currentCoords, const LegalMoves *moves)
-{
-    if (m_pawnSelectionCoordsAreValid(currentCoords))
-    {
-        const PromoteOptionsOrder_e PROMOTE_OPTION = currentCoords.y;
-        for (int i = 0; i < moves->noMoves; ++i)
-        {
-            const Move *move = &moves->moves[i];
-            if (move->type == CAPTURE_TO_PROMOTE || move->type == ADVANCE_TO_PROMOTE)
-            {
-                switch (PROMOTE_OPTION)
-                {
-                    case PROMOTE_QUEEN:
-                        if (move->movePartnerType == QUEEN)
-                            return i;
-                        break;
-                    case PROMOTE_KNIGHT:
-                        if (move->movePartnerType == KNIGHT)
-                            return i;
-                        break;
-                    case PROMOTE_BISHOP:
-                        if (move->movePartnerType == BISHOP)
-                            return i;
-                        break;
-                    case PROMOTE_ROOK:
-                        if (move->movePartnerType == ROOK)
-                            return i;
-                        break;
-                }
-            }
-        }
-    }
-    else
-    {
-        return -1;
-    }
-}
-
-ClickResult_e m_leftBtnPressed(MouseController *controller, const SDL_MouseButtonEvent *e)
-{
-    SDL_Point currentCoords = m_getTableCoords(controller, e);
-    if (!m_tableCoordsAreValid(currentCoords) && !m_pawnSelectionCoordsAreValid(currentCoords))
-        return INVALID;
-
-    //we previously selected a pawn and we choose to promote it with the following click
-    if (controller->actionClickState == CLICKED_MAKE_MOVE_AND_PROMOTE_PAWN)
-    {
-        //TODO: Invoke the promotionController
-        int index = m_promoteGetMoveIndexFromMouse(controller, currentCoords, &controller->movesForHeldPiece);
-        if (index == -1)
-            return INVALID;
-
-        controller->makeMoveAtIndex = index;
-        return FINISHED_PROMOTION;
-    }
-
-    //we are working strictly inside the table, so the pawn promotion logic hasn't been triggered yet
-    if (m_tableCoordsAreValid(currentCoords))
-    {
-        //if we have an empty hand, we possibly want to pick up a piece
-        if(controller->heldPieceState == EMPTY_HAND)
-        {
-
-            if ( m_isTherePieceOfTeamAt(controller->table, currentCoords, controller->fromPerspective))
-            {
-                controller->heldPieceState = PICKED_UP_PIECE;
-                controller->heldPieceCoords = currentCoords;
-
-                controller->actionClickState =  CLICKED_NOTHING;
-
-                //TODO: Maybe add a flag for when moves need to be generated (e.g right after this function returns)
-                // and leave the responsibility of move generation to another structure
-                controller->movesForHeldPiece = legalMoves_constructEmpty();
-                m_computeMoves(controller->table, controller->heldPieceCoords, &controller->movesForHeldPiece);
-
-                return SELECTED_PIECE;
-            }
-            else // did not click a correct piece (wrong team or empty tile)
-            {
-                return INVALID;
-            }
-        }
-
-
-
-        //If we already have a valid piece in hand, we would want to make a move
-        if(controller->heldPieceState == PICKED_UP_PIECE)
-        {
-
-            //we choose another piece instead of making a move with the previous piece
-            //(must be done after pawn promotion check because in that case we are clicking the same pawn again)
-            if (m_isTherePieceOfTeamAt(controller->table, currentCoords, controller->fromPerspective))
-            {
-                //TODO: Get rid of this code duplication (see higher up)
-                controller->heldPieceState = PICKED_UP_PIECE;
-                controller->heldPieceCoords = currentCoords;
-
-                controller->actionClickState =  CLICKED_NOTHING;
-
-                //TODO: Maybe add a flag for when moves need to be generated (e.g right after this function returns)
-                // and leave the responsibility of move generation to another structure
-                controller->movesForHeldPiece = legalMoves_constructEmpty();
-                m_computeMoves(controller->table, controller->heldPieceCoords, &controller->movesForHeldPiece);
-
-                return SELECTED_PIECE;
-            }
-            else //we are making a move;
-            {
-
-                for (int i = 0; i < controller->movesForHeldPiece.noMoves; ++i)
-                {
-                    Move *move = &controller->movesForHeldPiece.moves[i];
-                    if (currentCoords.x == move->x && currentCoords.y == move->y)
-                    {
-                        controller->actionClickState = CLICKED_MAKE_MOVE;
-                        controller->actionClickCoords = currentCoords;
-                        controller->makeMoveAtIndex = i;
-
-                        int pieceX = controller->movesForHeldPiece.startX;
-                        int pieceY = controller->movesForHeldPiece.startY;
-                        const Piece *pawn = controller->table->table[pieceY][pieceX];
-
-                        if (pawn->type == PAWN && (move->y == 0 || move->y == TABLE_HEIGHT - 1))
-                        {
-                            controller->actionClickState = CLICKED_MAKE_MOVE_AND_PROMOTE_PAWN;
-                            return STARTED_PROMOTION;
-                        }
-                        else
-                            return SELECTED_MOVE;
-                    }
-                }
-
-                return INVALID;
-            }
-        }
-
-    }
-
-
-}
-
-
-int m_promoteGetMoveIndexFromMouse2(MouseController *controller, SDL_Point currentCoords)
+int m_promoteGetMoveIndexFromMouse(MouseController *controller, SDL_Point currentCoords)
 {
     if (m_pawnSelectionCoordsAreValid(currentCoords))
     {
@@ -285,7 +138,7 @@ void m_clearController(MouseController *controller)
     // memset to zero if needed: controller->promotionMoveVariants;
 
 }
-ClickResult_e m_leftBtnPressed2(MouseController *controller, const SDL_MouseButtonEvent *e)
+ClickResult_e m_leftBtnPressed(MouseController *controller, const SDL_MouseButtonEvent *e)
 {
     SDL_Point currentCoords = m_getTableCoords(controller, e);
 
@@ -306,7 +159,7 @@ ClickResult_e m_leftBtnPressed2(MouseController *controller, const SDL_MouseButt
             return INVALID;
         }
 
-        int index = m_promoteGetMoveIndexFromMouse2(controller, currentCoords);
+        int index = m_promoteGetMoveIndexFromMouse(controller, currentCoords);
         if (index == -1)
         {
             controller->previousClickResult = INVALID;
@@ -441,7 +294,7 @@ ClickResult_e mouseController_onClick(MouseController *controller, const SDL_Mou
     switch (e->button)
     {
         case SDL_BUTTON_LEFT:
-            return m_leftBtnPressed2(controller, e);
+            return m_leftBtnPressed(controller, e);
             break;
         case SDL_BUTTON_RIGHT:
             return m_rightBtnPressed(controller, e);

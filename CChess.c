@@ -12,7 +12,6 @@
 void renderMoves(Screen *screen, const LegalMoves *moves);
 
 
-
 void applyPieceClickEffects(ClickResult_e clickResult, Table *table, Screen *screen,
                             MouseController *mouseController, bool showMoves, unsigned *turn);
 
@@ -80,9 +79,9 @@ int main(int argc, char *argv[])
                 // Cursor does not work in Clion's debugger right after a mouse event
                 // I could not find another way to solve this, so I am purposely throwing away a few
                 // events in order to get rid of the event that is blocking my cursor
-               SDL_WaitEvent(&debugging);
-               SDL_WaitEvent(&debugging);
-               SDL_WaitEvent(&debugging);
+//                SDL_WaitEvent(&debugging);
+//                SDL_WaitEvent(&debugging);
+//                SDL_WaitEvent(&debugging);
                 if (turn % 2 == 0)
                     clickResultWhite = mouseController_onClick(&mouseControllerWhite, &event.button);
                 else
@@ -107,39 +106,38 @@ void clearMouseController(MouseController *mouseController)
     mouseController->actionClickState = CLICKED_NOTHING;
     mouseController->makeMoveAtIndex = -1;
 }
+
 void applyPieceClickEffects(ClickResult_e clickResult, Table *table, Screen *screen,
                             MouseController *mouseController, bool showMoves, unsigned *turn)
 {
-    if (mouseController->heldPieceState == PICKED_UP_PIECE && clickResult != SELECTED_MOVE)
+    //TODO: This can surely be refactor to look better
+    if (showMoves && mouseController->heldPieceState == PICKED_UP_PIECE && clickResult != SELECTED_MOVE)
     {
-        if (showMoves)
+        if (clickResult != FINISHED_PROMOTION)
         {
+            SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(screen,
+                                                                          mouseController->heldPieceCoords.x,
+                                                                          mouseController->heldPieceCoords.y);
+            SDL_RenderCopy((*screen).renderer, (*screen).textures.selectHue, NULL, &heldPieceRect);
+            renderMoves(screen, &(*mouseController).movesForHeldPiece);
 
-            if (clickResult != FINISHED_PROMOTION)
+            if (mouseController->actionClickState == CLICKED_MAKE_MOVE_AND_PROMOTE_PAWN)
             {
-                SDL_Rect heldPieceRect = screen_tablePositionToScreenPosition(screen,
-                                                                              mouseController->heldPieceCoords.x,
-                                                                              mouseController->heldPieceCoords.y);
-                SDL_RenderCopy((*screen).renderer, (*screen).textures.selectHue, NULL, &heldPieceRect);
-                renderMoves(screen, &(*mouseController).movesForHeldPiece);
-
-                if (mouseController->actionClickState == CLICKED_MAKE_MOVE_AND_PROMOTE_PAWN)
-                {
-                    renderPromotionChoices(screen, mouseController->fromPerspective);
-                }
-            }
-            else
-            {
-                table_makeMove(table, &mouseController->promotionMoveVariants, mouseController->makeMoveAtIndex);
-                (*turn)++;
+                renderPromotionChoices(screen, mouseController->fromPerspective);
             }
         }
+        else
+        {
+            table_makeMove(table, &mouseController->promotionMoveVariants, mouseController->makeMoveAtIndex);
+            (*turn)++;
+        }
+
     }
     else if (clickResult == SELECTED_MOVE)
     {
-       table_makeMove(table, &mouseController->movesForHeldPiece, mouseController->makeMoveAtIndex);
-       mouseController->movesForHeldPiece = legalMoves_constructEmpty();
-       (*turn)++;
+        table_makeMove(table, &mouseController->movesForHeldPiece, mouseController->makeMoveAtIndex);
+        mouseController->movesForHeldPiece = legalMoves_constructEmpty();
+        (*turn)++;
 
     }
 }
@@ -151,7 +149,7 @@ void renderPromotionChoices(Screen *screen, PieceTeam_e perspective)
     const int ORIGIN_Y = PAWN_PROMOTION_CHOICE_ZONE_Y_START;
     if (perspective == WHITE)
     {
-        SDL_Rect rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X,  ORIGIN_Y + PROMOTE_QUEEN);
+        SDL_Rect rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X, ORIGIN_Y + PROMOTE_QUEEN);
         SDL_RenderCopy(renderer, screen->textures.whiteQueen, NULL, &rect);
 
         rect = screen_tablePositionToScreenPosition(screen, ORIGIN_X, ORIGIN_Y + PROMOTE_KNIGHT);
