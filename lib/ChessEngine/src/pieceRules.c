@@ -356,9 +356,9 @@ void pieceRules_findMovesKnight(const Piece *knight, const Table *table, LegalMo
     const int startY = knight->y;
     *outMoves = legalMoves_constructEmptyWithStart(startX, startY);
 
-    const int dirX[] = {-2, -2, -1, -1, +1, +1, +2, +2};
-    const int dirY[] = {-1, +1, -2, +2, -2, +2, -1, +1};
-    for (int i = 0; i < 7; ++i)
+    const int dirX[8] = {-2, -2, -1, -1, +1, +1, +2, +2};
+    const int dirY[8] = {-1, +1, -2, +2, -2, +2, -1, +1};
+    for (int i = 0; i <= 7; ++i)
     {
         const int x = dirX[i] + startX;
         const int y = dirY[i] + startY;
