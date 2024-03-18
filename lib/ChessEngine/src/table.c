@@ -21,26 +21,26 @@ void m_initTeamDefaultTop(Team *team, PieceTeam_e color)
     //inside the team array that can happen when a team is captured or a pawn promoted (perhaps)
     //This way, if the king is the first element and we know that it cannot be captured (Without loosing the game)
     //we will keep it at the front of the array;
-    Piece king = piece_construct(color, KING, 4, 0);
+    Piece king = piece_construct(color, KING, 4, 0, PIECE_KING_VALUE);
     team_addPiece(team, &king);
 
     for (int i = 0; i < 8; ++i)
     {
-        Piece pawn = piece_construct(color, PAWN, i, 1);
+        Piece pawn = piece_construct(color, PAWN, i, 1, PIECE_PAWN_VALUE);
         team_addPiece(team, &pawn);
     }
 
-    Piece rookLeft = piece_construct(color, ROOK, 0, 0);
+    Piece rookLeft = piece_construct(color, ROOK, 0, 0, PIECE_ROOK_VALUE);
     team_addPiece(team, &rookLeft);
 
-    Piece knightLeft = piece_construct(color, KNIGHT, 1, 0);
+    Piece knightLeft = piece_construct(color, KNIGHT, 1, 0, PIECE_KNIGHT_VALUE);
     team_addPiece(team, &knightLeft);
 
-    Piece bishopLeft = piece_construct(color, BISHOP, 2, 0);
+    Piece bishopLeft = piece_construct(color, BISHOP, 2, 0, PIECE_BISHOP_VALUE);
     team_addPiece(team, &bishopLeft);
 
 
-    Piece queen = piece_construct(color, QUEEN, 3, 0);
+    Piece queen = piece_construct(color, QUEEN, 3, 0, PIECE_QUEEN_VALUE);
     team_addPiece(team, &queen);
 
     // The first element of the array will be king
@@ -49,13 +49,13 @@ void m_initTeamDefaultTop(Team *team, PieceTeam_e color)
 //    team->king = m_getLastAddedPiece(team);
 
 
-    Piece bishopRight = piece_construct(color, BISHOP, 5, 0);
+    Piece bishopRight = piece_construct(color, BISHOP, 5, 0, PIECE_BISHOP_VALUE);
     team_addPiece(team, &bishopRight);
 
-    Piece knightRight = piece_construct(color, KNIGHT, 6, 0);
+    Piece knightRight = piece_construct(color, KNIGHT, 6, 0, PIECE_KNIGHT_VALUE);
     team_addPiece(team, &knightRight);
 
-    Piece rookRight = piece_construct(color, ROOK, 7, 0);
+    Piece rookRight = piece_construct(color, ROOK, 7, 0, PIECE_ROOK_VALUE);
     team_addPiece(team, &rookRight);
 
 
