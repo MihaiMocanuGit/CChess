@@ -7,7 +7,7 @@
 #define TEAM_INITIAL_NO_PIECES 32
 typedef struct
 {
-    bool kinkInCheck;
+    bool kingInCheck;
     PieceTeam_e teamColor;
     Piece pieces[TEAM_INITIAL_NO_PIECES];
     unsigned noPieces;

@@ -18,7 +18,7 @@ Piece *team_king(Team *team)
 }
 void team_initEmpty(Team *team, PieceTeam_e color)
 {
-    team->kinkInCheck = false;
+    team->kingInCheck = false;
     team->teamColor = color;
     team->noPieces = 0;
     team->noLostPieces = 0;
