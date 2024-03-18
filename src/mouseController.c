@@ -1,5 +1,5 @@
 #include "../include/mouseController.h"
-#include "../lib/ChessEngine/include/pieceRules.h"
+#include "../lib/ChessEngine/Structural/include/pieceRules.h"
 
 
 

@@ -4,8 +4,8 @@
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_render.h>
 
-#include "../lib/ChessEngine/include/piece.h"
-#include "../lib/ChessEngine/include/table.h"
+#include "../lib/ChessEngine/Structural/include/piece.h"
+#include "../lib/ChessEngine/Structural/include/table.h"
 #include "objectSurfaces.h"
 #include "objectTextures.h"
 
