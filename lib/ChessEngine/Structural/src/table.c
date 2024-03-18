@@ -177,7 +177,7 @@ void table_capturePiece(Table *table, const LegalMoves *moves, int moveIndex)
     }
 
     //TODO: make this a team function
-    team->lostPieces[table->whiteTeam.noPieces++] = *capturedPiece;
+    team->lostPieces[team->noLostPieces++] = *capturedPiece;
 
     for (int i = 0; i < team->noPieces; ++i)
     {
