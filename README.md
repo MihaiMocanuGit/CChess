@@ -1,4 +1,4 @@
-# CChess
+# CChess [DEVELOPMENT ON PAUSE]
 
 ## Two in One
 ### Chess game and engine:
